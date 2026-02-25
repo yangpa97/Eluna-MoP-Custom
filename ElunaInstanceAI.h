@@ -1,16 +1,19 @@
 /*
-* Copyright (C) 2010 - 2024 Eluna Lua Engine <https://elunaluaengine.github.io/>
-* This program is free software licensed under GPL version 3
-* Please see the included DOCS/LICENSE.md for more information
-*/
+ * Copyright (C) 2010 - 2024 Eluna Lua Engine
+ * <https://elunaluaengine.github.io/> This program is free software licensed
+ * under GPL version 3 Please see the included DOCS/LICENSE.md for more
+ * information
+ */
 
 #ifndef _ELUNA_INSTANCE_DATA_H
 #define _ELUNA_INSTANCE_DATA_H
 
 #include "LuaEngine.h"
-#if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE
+#if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE || defined ELUNA_SKYFIRE
 #include "InstanceScript.h"
 #include "Map.h"
+
+
 #elif defined ELUNA_CMANGOS
 #include "Maps/InstanceData.h"
 #else
@@ -34,16 +37,18 @@
  *
  *   1. Store the last save data in the member var `lastSaveData`.
  *
- *      At first this is just the data given to us by the core when it calls `Load`,
- *        but later on once we start saving new data this is from Eluna.
+ *      At first this is just the data given to us by the core when it calls
+ * `Load`, but later on once we start saving new data this is from Eluna.
  *
  *   2. When retrieving instance data from Eluna, check if it's missing.
  *
- *      The data will be missing if Eluna is reloaded, since a new Lua state is created.
+ *      The data will be missing if Eluna is reloaded, since a new Lua state is
+ * created.
  *
  *   3. If it *is* missing, call `Reload`.
  *
- *      This reloads the last known instance save data into Eluna, and calls the appropriate hooks.
+ *      This reloads the last known instance save data into Eluna, and calls the
+ * appropriate hooks.
  *
  *
  * Note 2
@@ -55,112 +60,121 @@
  * Therefore, none of the hooks are `const`-safe, and `const_cast` is used
  *   to escape from these restrictions.
  */
-class ElunaInstanceAI : public InstanceData
-{
+#if defined ELUNA_SKYFIRE
+class ElunaInstanceAI : public InstanceScript {
+#else
+class ElunaInstanceAI : public InstanceData {
+#endif
 private:
-    // The last save data to pass through this class,
-    //   either through `Load` or `Save`.
-    std::string lastSaveData;
+  // The last save data to pass through this class,
+  //   either through `Load` or `Save`.
+  std::string lastSaveData;
 
 public:
 #if defined ELUNA_TRINITY
-    ElunaInstanceAI(Map* map) : InstanceData(map->ToInstanceMap())
-    {
-    }
+  ElunaInstanceAI(Map *map) : InstanceData(map->ToInstanceMap()) {}
+#elif defined ELUNA_SKYFIRE
+  ElunaInstanceAI(Map *map) : InstanceScript(map) {}
 #else
-    ElunaInstanceAI(Map* map) : InstanceData(map)
-    {
-    }
+ElunaInstanceAI(Map *map) : InstanceData(map) {}
 #endif
 
 #if !defined ELUNA_TRINITY
-    void Initialize() override;
+  void Initialize() override;
 #endif
 
-    /*
-     * These are responsible for serializing/deserializing the instance's
-     *   data table to/from the core.
-     */
-    void Load(const char* data) override;
-#if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE
-    // Simply calls Save, since the functions are a bit different in name and data types on different cores
-    std::string GetSaveData() override
-    {
-        return Save();
-    }
-    const char* Save() const;
+  /*
+   * These are responsible for serializing/deserializing the instance's
+   *   data table to/from the core.
+   */
+  void Load(const char *data) override;
+#if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE || defined ELUNA_SKYFIRE
+  // Simply calls Save, since the functions are a bit different in name and data
+  // types on different cores
+  std::string GetSaveData() override { return Save(); }
+  const char *Save() const;
 #elif defined ELUNA_VMANGOS
-    const char* Save() const;
+  const char *Save() const;
 #else
-    const char* Save() const override;
+const char *Save() const override;
 #endif
 
+  /*
+   * Calls `Load` with the last save data that was passed to
+   * or from Eluna.
+   *
+   * See: big documentation blurb at the top of this class.
+   */
+  void Reload() { Load(NULL); }
 
-    /*
-     * Calls `Load` with the last save data that was passed to
-     * or from Eluna.
-     *
-     * See: big documentation blurb at the top of this class.
-     */
-    void Reload()
-    {
-        Load(NULL);
-    }
-
-    /*
-     * These methods allow non-Lua scripts (e.g. DB, C++) to get/set instance data.
-     */
-#if !defined ELUNA_VMANGOS
-    uint32 GetData(uint32 key) const override;
+  /*
+   * These methods allow non-Lua scripts (e.g. DB, C++) to get/set instance
+   * data.
+   */
+#if !defined ELUNA_VMANGOS && !defined ELUNA_SKYFIRE
+  uint32 GetData(uint32 key) const override;
 #else
-    uint32 GetData(uint32 key) const;
+  uint32 GetData(uint32 key) const;
 #endif
-    void SetData(uint32 key, uint32 value) override;
-
-#if !defined ELUNA_VMANGOS
-    uint64 GetData64(uint32 key) const override;
+#ifndef ELUNA_SKYFIRE
+  void SetData(uint32 key, uint32 value) override;
 #else
-    uint64 GetData64(uint32 key) const;
+  void SetData(uint32 key, uint32 value);
 #endif
-    void SetData64(uint32 key, uint64 value) override;
 
-    /*
-     * These methods are just thin wrappers around Eluna.
-     */
-    void Update(uint32 diff) override
-    {
-        // If Eluna is reloaded, it will be missing our instance data.
-        // Reload here instead of waiting for the next hook call (possibly never).
-        // This avoids having to have an empty Update hook handler just to trigger the reload.
-        if (!instance->GetEluna()->HasInstanceData(instance))
-            Reload();
+#if !defined ELUNA_VMANGOS && !defined ELUNA_SKYFIRE
+  uint64 GetData64(uint32 key) const override;
+#else
+  uint64 GetData64(uint32 key) const;
+#endif
+#ifndef ELUNA_SKYFIRE
+  void SetData64(uint32 key, uint64 value) override;
+#else
+  void SetData64(uint32 key, uint64 value);
+#endif
 
-        instance->GetEluna()->OnUpdateInstance(this, diff);
-    }
+  /*
+   * These methods are just thin wrappers around Eluna.
+   */
+  void Update(uint32 diff) override {
+    // If Eluna is reloaded, it will be missing our instance data.
+    // Reload here instead of waiting for the next hook call (possibly never).
+    // This avoids having to have an empty Update hook handler just to trigger
+    // the reload.
+    if (!instance->GetEluna()->HasInstanceData(instance))
+      Reload();
 
-    bool IsEncounterInProgress() const override
-    {
-        return instance->GetEluna()->OnCheckEncounterInProgress(const_cast<ElunaInstanceAI*>(this));
-    }
+    instance->GetEluna()->OnUpdateInstance(this, diff);
+  }
 
-    void OnPlayerEnter(Player* player) override
-    {
-        instance->GetEluna()->OnPlayerEnterInstance(this, player);
-    }
+  bool IsEncounterInProgress() const override {
+    return instance->GetEluna()->OnCheckEncounterInProgress(
+        const_cast<ElunaInstanceAI *>(this));
+  }
+
+  void OnPlayerEnter(Player *player) override {
+    instance->GetEluna()->OnPlayerEnterInstance(this, player);
+  }
 
 #if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE
-    void OnGameObjectCreate(GameObject* gameobject) override
+  void OnGameObjectCreate(GameObject *gameobject) override
+#elif defined ELUNA_SKYFIRE
+  void OnObjectCreate(GameObject *gameobject)
 #else
-    void OnObjectCreate(GameObject* gameobject) override
+void OnObjectCreate(GameObject *gameobject) override
 #endif
-    {
-        instance->GetEluna()->OnGameObjectCreate(this, gameobject);
-    }
+  {
+    instance->GetEluna()->OnGameObjectCreate(this, gameobject);
+  }
 
-    void OnCreatureCreate(Creature* creature) override
-    {
-        instance->GetEluna()->OnCreatureCreate(this, creature);
-    }
+#ifndef ELUNA_SKYFIRE
+  void OnCreatureCreate(Creature *creature) override
+#else
+  void OnCreatureCreate(Creature *creature)
+#endif
+  {
+    instance->GetEluna()->OnCreatureCreate(this, creature);
+  }
 };
 
 #endif // _ELUNA_INSTANCE_DATA_H

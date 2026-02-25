@@ -1,15 +1,19 @@
 /*
-* Copyright (C) 2010 - 2024 Eluna Lua Engine <https://elunaluaengine.github.io/>
-* This program is free software licensed under GPL version 3
-* Please see the included DOCS/LICENSE.md for more information
-*/
+ * Copyright (C) 2010 - 2024 Eluna Lua Engine
+ * <https://elunaluaengine.github.io/> This program is free software licensed
+ * under GPL version 3 Please see the included DOCS/LICENSE.md for more
+ * information
+ */
 
 #ifndef _ELUNA_INCLUDES_H
 #define _ELUNA_INCLUDES_H
 
 // Required
 #if !defined ELUNA_CMANGOS
-#include "AccountMgr.h"
+#if defined ELUNA_SKYFIRE
+#include "Object.h"
+#endif
+#include "Accounts/AccountMgr.h"
 #include "AuctionHouseMgr.h"
 #include "Bag.h"
 #include "Cell.h"
@@ -26,11 +30,14 @@
 #include "GuildMgr.h"
 #include "Language.h"
 #include "Mail.h"
+#include "SharedDefines.h"
+
 #if defined ELUNA_AZEROTHCORE
 #include "MapMgr.h"
 #else
 #include "MapManager.h"
 #endif
+#include "Creature.h"
 #include "ObjectAccessor.h"
 #include "ObjectMgr.h"
 #include "Opcodes.h"
@@ -44,6 +51,7 @@
 #include "TemporarySummon.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
+
 #if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE
 #include "Battleground.h"
 #include "Config.h"
@@ -66,7 +74,7 @@
 #include "SQLStorages.h"
 #elif defined ELUNA_MANGOS
 #include "SQLStorages.h"
-#endif  // ELUNA_TRINITY
+#endif // ELUNA_TRINITY
 #if ELUNA_EXPANSION > EXP_CLASSIC
 #include "ArenaTeam.h"
 #endif
@@ -76,6 +84,7 @@
 #else
 #include "Accounts/AccountMgr.h"
 #include "AuctionHouse/AuctionHouseMgr.h"
+#include "Battlegrounds/Battleground.h"
 #include "Chat/Channel.h"
 #include "Chat/Chat.h"
 #include "DBScripts/ScriptMgr.h"
@@ -98,13 +107,16 @@
 #include "Reputation/ReputationMgr.h"
 #include "Server/DBCStores.h"
 #include "Server/Opcodes.h"
-#include "Server/WorldPacket.h"
-#include "Server/WorldSession.h"
+#include "Server/SQLStorages.h"
 #include "Spells/Spell.h"
 #include "Spells/SpellAuras.h"
+#include "Spells/SpellInfo.h"
 #include "Spells/SpellMgr.h"
+
+#include "Server/WorldPacket.h
+#include "Server/WorldSession.h"
 #include "Tools/Language.h"
-#include "Server/SQLStorages.h"
+
 #if ELUNA_EXPANSION > EXP_CLASSIC
 #include "Arena/ArenaTeam.h"
 #endif
@@ -119,10 +131,19 @@
 #endif
 
 #if !defined ELUNA_TRINITY && !defined ELUNA_AZEROTHCORE
-#include "Config/Config.h"
 #include "BattleGroundMgr.h"
+#if defined ELUNA_SKYFIRE
+#include "Configuration/Config.h"
+#else
+#include "Config/Config.h"
+#endif
+
 #if !defined ELUNA_MANGOS
+#if defined ELUNA_SKYFIRE
+#define CORE_VERSION "SkyFire 5.4.8"
+#else
 #include "revision.h"
+#endif
 #else
 #include "GitRevision.h"
 #include "revision_data.h"
@@ -137,93 +158,160 @@ typedef Opcodes OpcodesList;
 
 /*
  * Note: if you add or change a CORE_NAME or CORE_VERSION #define,
- *   please update LuaGlobalFunctions::GetCoreName or LuaGlobalFunctions::GetCoreVersion documentation example string.
+ *   please update LuaGlobalFunctions::GetCoreName or
+ * LuaGlobalFunctions::GetCoreVersion documentation example string.
  */
+#if defined ELUNA_SKYFIRE
+#include "Object.h"
+#endif
+
 #if defined ELUNA_CMANGOS
-#define CORE_NAME               "cMaNGOS"
-#define CORE_VERSION            REVISION_DATE " " REVISION_ID
+#define CORE_NAME "cMaNGOS"
+#define CORE_VERSION REVISION_DATE " " REVISION_ID
 #if ELUNA_EXPANSION == EXP_CATA
-#define NUM_MSG_TYPES           MAX_OPCODE_TABLE_SIZE
+#define NUM_MSG_TYPES MAX_OPCODE_TABLE_SIZE
 #endif
 #endif
 
 #if defined ELUNA_VMANGOS
-#define CORE_NAME               "vMaNGOS"
-#define CORE_VERSION            REVISION_HASH
-#define DEFAULT_LOCALE          LOCALE_enUS
+#define CORE_NAME "vMaNGOS"
+#define CORE_VERSION REVISION_HASH
+#define DEFAULT_LOCALE LOCALE_enUS
 #endif
 
 #if defined ELUNA_MANGOS
-#define CORE_NAME               "MaNGOS"
-#define CORE_VERSION            PROJECT_REVISION_NR
+#define CORE_NAME "MaNGOS"
+#define CORE_VERSION PROJECT_REVISION_NR
 #endif
 
 #if defined ELUNA_TRINITY
-#define CORE_NAME               "TrinityCore"
+#define CORE_NAME "TrinityCore"
 #define REGEN_TIME_FULL
 #endif
 
 #if defined ELUNA_AZEROTHCORE
-#define CORE_NAME               "AzerothCore"
+#define CORE_NAME "AzerothCore"
 #define REGEN_TIME_FULL
 #endif
 
 #if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE
-#define CORE_VERSION            (GitRevision::GetFullVersion())
-#define eWorld                  (sWorld)
+#define CORE_VERSION (GitRevision::GetFullVersion())
+#define eWorld (sWorld)
 #if defined ELUNA_AZEROTHCORE
-#define eWorldSessionMgr        (sWorldSessionMgr)
+#define eWorldSessionMgr (sWorldSessionMgr)
 #endif
-#define eMapMgr                 (sMapMgr)
-#define eGuildMgr               (sGuildMgr)
-#define eObjectMgr              (sObjectMgr)
+#define eMapMgr (sMapMgr)
+#define eGuildMgr (sGuildMgr)
+#define eObjectMgr (sObjectMgr)
 #if defined ELUNA_AZEROTHCORE
-#define eAccountMgr()           AccountMgr::
+#define eAccountMgr() AccountMgr::
 #else
-#define eAccountMgr             (sAccountMgr)
+#define eAccountMgr (sAccountMgr)
 #endif
-#define eAuctionMgr             (sAuctionMgr)
-#define eGameEventMgr           (sGameEventMgr)
-#define eObjectAccessor()       ObjectAccessor::
+#define eAuctionMgr (sAuctionMgr)
+#define eGameEventMgr (sGameEventMgr)
+#define eObjectAccessor() ObjectAccessor::
 #else
-#define eWorld                  (&sWorld)
-#define eMapMgr                 (&sMapMgr)
-#define eConfigMgr              (&sConfig)
-#define eGuildMgr               (&sGuildMgr)
-#define eObjectMgr              (&sObjectMgr)
-#define eAccountMgr             (&sAccountMgr)
-#define eAuctionMgr             (&sAuctionMgr)
-#define eGameEventMgr           (&sGameEventMgr)
-#define eObjectAccessor()       sObjectAccessor.
-#define SERVER_MSG_STRING       SERVER_MSG_CUSTOM
-#define TOTAL_LOCALES           MAX_LOCALE
-#define TARGETICONCOUNT         TARGET_ICON_COUNT
-#define MAX_TALENT_SPECS        MAX_TALENT_SPEC_COUNT
+#if defined ELUNA_SKYFIRE
+#define eWorld (sWorld)
+#define eMapMgr (sMapMgr)
+#define eConfigMgr (sConfigMgr)
+#define eGuildMgr (sGuildMgr)
+#define eObjectMgr (sObjectMgr)
+#define eAccountMgr (sAccountMgr)
+#define eAuctionMgr (sAuctionMgr)
+#define eGameEventMgr (sGameEventMgr)
+#define eObjectAccessor() sObjectAccessor->
+#else
+#define eWorld (&sWorld)
+#define eMapMgr (&sMapMgr)
+#define eConfigMgr (&sConfig)
+#define eGuildMgr (&sGuildMgr)
+#define eObjectMgr (&sObjectMgr)
+#define eAccountMgr (&sAccountMgr)
+#define eAuctionMgr (&sAuctionMgr)
+#define eGameEventMgr (&sGameEventMgr)
+#define eObjectAccessor() sObjectAccessor.
+#endif
+#ifndef ELUNA_SKYFIRE
+#define SERVER_MSG_STRING SERVER_MSG_CUSTOM
+#endif
+#ifndef ELUNA_SKYFIRE
+#define TOTAL_LOCALES MAX_LOCALE
+#endif
+#ifdef TARGETICONCOUNT
+#undef TARGETICONCOUNT
+#endif
+#define TARGETICONCOUNT TARGET_ICON_COUNT
+#ifdef MAX_TALENT_SPECS
+#undef MAX_TALENT_SPECS
+#endif
+#define MAX_TALENT_SPECS MAX_TALENT_SPEC_COUNT
+#ifndef ELUNA_SKYFIRE
 #if !defined ELUNA_VMANGOS
-#define TEAM_NEUTRAL            TEAM_INDEX_NEUTRAL
+#define TEAM_NEUTRAL TEAM_INDEX_NEUTRAL
 #endif
-
+#endif
 
 #if defined ELUNA_VMANGOS
-#define PLAYER_FIELD_LIFETIME_HONORABLE_KILLS   PLAYER_FIELD_LIFETIME_HONORBALE_KILLS
+#define PLAYER_FIELD_LIFETIME_HONORABLE_KILLS                                  \
+  PLAYER_FIELD_LIFETIME_HONORBALE_KILLS
 #endif
 
 #if ELUNA_EXPANSION == EXP_TBC
-#define SPELL_AURA_MOD_KILL_XP_PCT  SPELL_AURA_MOD_XP_PCT
+#define SPELL_AURA_MOD_KILL_XP_PCT SPELL_AURA_MOD_XP_PCT
 #endif
 
 #if !defined ELUNA_MANGOS
 #if ELUNA_EXPANSION >= EXP_WOTLK
-#define UNIT_BYTE2_FLAG_SANCTUARY   UNIT_BYTE2_FLAG_SUPPORTABLE
+#define UNIT_BYTE2_FLAG_SANCTUARY UNIT_BYTE2_FLAG_SUPPORTABLE
 #endif
 #endif
 
 #if !defined ELUNA_CMANGOS
+#if defined ELUNA_SKYFIRE
+#include "SpellInfo.h"
+#include "TemporarySummon.h"
+
+typedef TempSummon TemporarySummon;
+// SpellEntry is already defined in DBCStructure.h as the low-level struct
+// Lua engine uses SpellEntry to refer to SpellInfo in some cores,
+// but here we just use what's available.
+#else
 typedef TemporarySummon TempSummon;
+#endif
 #else
 typedef TemporarySpawn TempSummon;
 #endif
+#if !defined ELUNA_SKYFIRE && !defined ELUNA_TRINITY
 typedef SpellEntry SpellInfo;
+#endif
 #endif // ELUNA_TRINITY
 
+#if defined ELUNA_SKYFIRE
+// Correctly map TOTAL_LOCALES for Skyfire
+#ifndef TOTAL_LOCALES
+#define TOTAL_LOCALES 9 // Standard MoP locale count
+#endif
+// Removed duplicate QueryResultFieldMetadata definition (moved to
+// QueryResult.h)
+namespace DatabaseFieldTypes {
+enum {
+  UInt8 = MYSQL_TYPE_TINY,
+  UInt16 = MYSQL_TYPE_SHORT,
+  UInt32 = MYSQL_TYPE_LONG,
+  Int8 = MYSQL_TYPE_TINY,
+  Int16 = MYSQL_TYPE_SHORT,
+  Int32 = MYSQL_TYPE_LONG,
+  UInt64 = MYSQL_TYPE_LONGLONG,
+  Int64 = MYSQL_TYPE_LONGLONG,
+  Float = MYSQL_TYPE_FLOAT,
+  Double = MYSQL_TYPE_DOUBLE,
+  Decimal = MYSQL_TYPE_DECIMAL,
+  Date = MYSQL_TYPE_DATE,
+  Time = MYSQL_TYPE_TIME,
+  Binary = MYSQL_TYPE_BLOB,
+};
+}
+#endif
 #endif // _ELUNA_INCLUDES_H
