@@ -3129,7 +3129,7 @@ int SendAreaTriggerMessage(Eluna *E, Player *player) {
   if (msg.length() > 0)
     // player->GetSession()->SendAreaTriggerMessage("%s", msg.c_str()); //
     // FIXME: Skyfire MoP equivalent missing
-    player->GetSession()->SendNotification("{}", msg.c_str());
+    player->GetSession()->SendNotification("%s", msg.c_str());
   return 0;
 }
 

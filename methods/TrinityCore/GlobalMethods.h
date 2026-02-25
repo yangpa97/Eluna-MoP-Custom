@@ -189,7 +189,7 @@ int GetPlayersInWorld(Eluna *E) {
   int tbl = lua_gettop(E->L);
   uint32 i = 0;
 
-  std::shared_lock<std::shared_mutex> lock(*HashMapHolder<Player>::GetLock());
+  std::lock_guard<std::mutex> lock(*HashMapHolder<Player>::GetLock());
   const HashMapHolder<Player>::MapType &m = eObjectAccessor() GetPlayers();
   for (HashMapHolder<Player>::MapType::const_iterator it = m.begin();
        it != m.end(); ++it) {
