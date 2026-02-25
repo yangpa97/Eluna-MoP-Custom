@@ -363,13 +363,11 @@ public:
 
   template <typename OtherC> struct CallDispatcher {
     static int Call(Eluna *E, ElunaRegister<OtherC> *l, void *obj) {
-      return l->mfunc(E, static_cast<OtherC *>(obj));
-    }
-  };
-
-  template <> struct CallDispatcher<void> {
-    static int Call(Eluna *E, ElunaRegister<void> *l, void *) {
-      return l->mfunc(E);
+      if constexpr (std::is_same<OtherC, void>::value) {
+        return l->mfunc(E);
+      } else {
+        return l->mfunc(E, static_cast<OtherC *>(obj));
+      }
     }
   };
 
