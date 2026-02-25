@@ -113,7 +113,7 @@
 #include "Spells/SpellInfo.h"
 #include "Spells/SpellMgr.h"
 
-#include "Server/WorldPacket.h
+#include "Server/WorldPacket.h"
 #include "Server/WorldSession.h"
 #include "Tools/Language.h"
 
@@ -131,7 +131,7 @@
 #endif
 
 #if !defined ELUNA_TRINITY && !defined ELUNA_AZEROTHCORE
-#include "BattleGroundMgr.h"
+#include "BattlegroundMgr.h"
 #if defined ELUNA_SKYFIRE
 #include "Configuration/Config.h"
 #else
