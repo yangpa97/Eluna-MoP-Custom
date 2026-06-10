@@ -218,6 +218,20 @@ uint64 EventMgr::CreateObjectProcessor(WorldObject *obj) {
 #else
   uint64 id = obj->GetObjectGuid().GetRawValue();
 #endif
+
+  // SKYFIRE: si ya existe un procesador con este id (p.ej. relogin con el
+  // procesador anterior aun pendiente de borrado), reutilizarlo en vez de
+  // duplicarlo — un emplace fallido dejaria un puntero colgante en
+  // `processors` y crashearia en UpdateProcessors.
+  auto existing = objectProcessors.find(id);
+  if (existing != objectProcessors.end()) {
+    ElunaEventProcessor *p = existing->second.get();
+    p->pendingDeletion = false;
+    p->obj = obj;
+    objectProcessorsPendingDelete.erase(id);
+    return id;
+  }
+
   auto proc = std::make_unique<ElunaEventProcessor>(this, obj);
   ElunaEventProcessor *raw = proc.get();
 

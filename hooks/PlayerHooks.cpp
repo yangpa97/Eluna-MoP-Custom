@@ -76,10 +76,16 @@ bool Eluna::OnCommand(Player *player, const char *text) {
                       sElunaConfig->GetReloadSecurityLevel())) {
     std::string reload = text;
     std::transform(reload.begin(), reload.end(), reload.begin(), ::tolower);
+    // SKYFIRE: ChatHandler::ParseCommands pasa el texto ANTES de quitar el
+    // prefijo '.'/'!' — sin esto ".reload eluna" jamas matchea (find()==0).
+    std::string::size_type cmdStart = reload.find_first_not_of(" \t.!");
+    if (cmdStart == std::string::npos)
+      cmdStart = reload.length();
     const std::string reload_command = "reload eluna";
-    if (reload.find(reload_command) == 0) {
+    if (reload.compare(cmdStart, reload_command.length(), reload_command) ==
+        0) {
       int mapId = RELOAD_ALL_STATES;
-      std::string args = reload.substr(reload_command.length());
+      std::string args = reload.substr(cmdStart + reload_command.length());
       if (!args.empty())
         mapId = strtol(args.c_str(), nullptr, 10);
 

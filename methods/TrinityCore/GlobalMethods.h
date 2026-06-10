@@ -9,6 +9,7 @@
 #define GLOBALMETHODS_H
 
 #include "BindingMap.h"
+#include "ElunaLoader.h" // SKYFIRE: ReloadEluna() refresca la cache de scripts
 
 /***
  * These functions can be used anywhere at any time, including at start-up.
@@ -189,7 +190,7 @@ int GetPlayersInWorld(Eluna *E) {
   int tbl = lua_gettop(E->L);
   uint32 i = 0;
 
-  std::lock_guard<std::mutex> lock(*HashMapHolder<Player>::GetLock());
+  std::shared_lock<std::shared_mutex> lock(*HashMapHolder<Player>::GetLock());
   const HashMapHolder<Player>::MapType &m = eObjectAccessor() GetPlayers();
   for (HashMapHolder<Player>::MapType::const_iterator it = m.begin();
        it != m.end(); ++it) {
@@ -1466,6 +1467,10 @@ int RegisterSpellEvent(Eluna *E) {
  * Reloads the Lua engine.
  */
 int ReloadEluna(Eluna *E) {
+  // SKYFIRE: releer los .lua del disco (sin esto solo se re-ejecuta el
+  // bytecode cacheado y los cambios de fichero no se aplican). El estado se
+  // recarga en el siguiente tick, cuando la cache vuelve a estar READY.
+  sElunaLoader->ReloadElunaForMap(RELOAD_CACHE_ONLY);
   E->ReloadEluna();
   return 0;
 }
