@@ -384,16 +384,9 @@ void Eluna::OnSpellCast(Player *pPlayer, Spell *pSpell, bool skipCheck) {
 }
 
 void Eluna::OnLogin(Player *pPlayer) {
-  ELUNA_LOG_INFO("[Eluna Debug] OnLogin called for player: %s on map: %d",
-                 pPlayer ? pPlayer->GetName().c_str() : "NULL",
-                 GetBoundMapId());
   START_HOOK(PLAYER_EVENT_ON_LOGIN);
-  ELUNA_LOG_INFO("[Eluna Debug] OnLogin binding ptr: %p, key: %u",
-                 (void *)binding, key);
   HookPush(pPlayer);
   CallAllFunctions(binding, key);
-  ELUNA_LOG_INFO("[Eluna Debug] OnLogin completed for player: %s",
-                 pPlayer ? pPlayer->GetName().c_str() : "NULL");
 }
 
 void Eluna::OnLogout(Player *pPlayer) {

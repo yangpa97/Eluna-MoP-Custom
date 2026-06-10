@@ -9,6 +9,7 @@
 #define _ELUNA_CREATURE_AI_H
 
 #include "LuaEngine.h"
+#include "World.h"
 #if defined ELUNA_CMANGOS
 #include "AI/BaseAI/CreatureAI.h"
 #endif
@@ -41,7 +42,12 @@ struct ElunaCreatureAI : NativeScriptedAI {
       : NativeScriptedAI(creature), justSpawned(true) {}
   ~ElunaCreatureAI() {}
 
-  Eluna *GetEluna() const { return me->GetMap()->GetEluna(); }
+  // CUSTOM: en este core multistate, map->GetEluna() puede ser NULL (p.ej. map 169
+  // ex-raid convertido a mundo). Caemos al estado global para no desreferenciar NULL.
+  Eluna *GetEluna() const {
+    Eluna *e = me->GetMap()->GetEluna();
+    return e ? e : sWorld->GetEluna();
+  }
 
   // Called at World update tick
 #if !defined ELUNA_TRINITY
@@ -202,6 +208,17 @@ struct ElunaCreatureAI : NativeScriptedAI {
   void sGossipSelectCode(Player *player, uint32 sender, uint32 action,
                          char const *code) override {
     GetEluna()->OnGossipSelectCode(player, me, sender, action, code);
+  }
+
+  // Quest hooks - route to Eluna's OnQuestAccept/OnQuestReward (creature).
+  // El core ya llama AI()->sQuestAccept/sQuestReward (QuestHandler), asi que
+  // basta con sobreescribirlos aqui; no hace falta tocar el core.
+  void sQuestAccept(Player *player, Quest const *quest) override {
+    GetEluna()->OnQuestAccept(player, me, quest);
+  }
+
+  void sQuestReward(Player *player, Quest const *quest, uint32 opt) override {
+    GetEluna()->OnQuestReward(player, me, quest, opt);
   }
 
   // called when the corpse of this creature gets removed
