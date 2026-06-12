@@ -91,6 +91,16 @@ bool Eluna::OnCommand(Player *player, const char *text) {
 
       sElunaLoader->ReloadElunaForMap(mapId);
 
+      // SKYFIRE: feedback visible — sin esto la recarga es silenciosa y parece
+      // que el comando no funciona (la recarga real es asincrona, al terminar
+      // de recompilar la cache del disco).
+      if (player)
+        ChatHandler(player->GetSession())
+            .SendSysMessage("|cff00ff00[Eluna]|r Recarga de scripts Lua "
+                            "iniciada (se aplica en ~1s).");
+      else
+        SF_LOG_INFO("eluna", "[Eluna] Recarga de scripts solicitada (consola).");
+
       return false;
     }
   }
