@@ -134,14 +134,11 @@ typedef QueryResult ElunaQuery; // QueryResult is AutoPtr in Skyfire/TC
 #endif
 
 #include <random>
-#ifndef urand
-inline uint32 urand(uint32 min, uint32 max) {
-  static std::random_device rd;
-  static std::mt19937 gen(rd());
-  std::uniform_int_distribution<uint32> dis(min, max);
-  return dis(gen);
-}
-#endif
+// urand ahora lo provee el core como funcion global (shared/Utilities/Util.h).
+// Se retira la definicion local de Eluna para evitar doble definicion en el
+// enlazado (LNK2005): antes el core carecia de urand global y Eluna traia el
+// suyo; el guard '#ifndef urand' nunca disparaba (urand es funcion, no macro).
+#include "Util.h"
 
 // Adapt macros to use Skyfire global functions instead of ObjectGuid class
 // methods
