@@ -1931,6 +1931,30 @@ int MoveJump(Eluna *E, Unit *unit) {
 }
 
 /**
+ * Knocks the [Unit] back away from a source point.
+ *
+ * The unit is pushed AWAY from (x, y): pass the position of the trap,
+ * explosion or caster as the source point. Works on players too (the
+ * core sends the movement opcode to the client).
+ *
+ * SKYFIRE: expuesto para eventos Lua (trampas de empujon, geiseres).
+ *
+ * @param float x : x coordinate of the source point
+ * @param float y : y coordinate of the source point
+ * @param float speedXY : horizontal knockback speed
+ * @param float speedZ : vertical (upward) speed
+ */
+int KnockbackFrom(Eluna *E, Unit *unit) {
+  float x = E->CHECKVAL<float>(2);
+  float y = E->CHECKVAL<float>(3);
+  float speedXY = E->CHECKVAL<float>(4);
+  float speedZ = E->CHECKVAL<float>(5);
+
+  unit->KnockbackFrom(x, y, speedXY, speedZ);
+  return 0;
+}
+
+/**
  * The [Unit] will whisper the message to a [Player]
  *
  * @param string msg : message for the [Unit] to emote
@@ -2631,6 +2655,7 @@ ElunaRegister<Unit> UnitMethods[] = {
     {"MoveFleeing", &LuaUnit::MoveFleeing},
     {"MoveTo", &LuaUnit::MoveTo},
     {"MoveJump", &LuaUnit::MoveJump},
+    {"KnockbackFrom", &LuaUnit::KnockbackFrom},
     {"MoveStop", &LuaUnit::MoveStop},
     {"MoveExpire", &LuaUnit::MoveExpire},
     {"MoveClear", &LuaUnit::MoveClear},

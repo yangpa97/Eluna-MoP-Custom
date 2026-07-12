@@ -10,6 +10,8 @@
 
 #include "LuaEngine.h"
 #include "World.h"
+#include "GossipDef.h"
+#include "Player.h"   // SKYFIRE: definicion completa de Player (PlayerTalkClass en sGossipSelect)
 #if defined ELUNA_CMANGOS
 #include "AI/BaseAI/CreatureAI.h"
 #endif
@@ -201,12 +203,21 @@ struct ElunaCreatureAI : NativeScriptedAI {
     GetEluna()->OnGossipHello(player, me);
   }
 
-  void sGossipSelect(Player *player, uint32 sender, uint32 action) override {
+  // SKYFIRE: el core entrega (menuId, gossipListId) — NO (sender, action)+.
+  // Los sender/intid REALES (los pasados a GossipMenuAddItem desde Lua) hay
+  // que resolverlos en el PlayerMenu. Sin esto el script recibia la POSICION
+  // del item como intid, y solo funcionaban de carambola los menus cuyos
+  // intid coinciden con el orden (caso laberinto: 0,1,2,3).
+  void sGossipSelect(Player *player, uint32 menuId, uint32 gossipListId) override {
+    uint32 sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+    uint32 action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
     GetEluna()->OnGossipSelect(player, me, sender, action);
   }
 
-  void sGossipSelectCode(Player *player, uint32 sender, uint32 action,
+  void sGossipSelectCode(Player *player, uint32 menuId, uint32 gossipListId,
                          char const *code) override {
+    uint32 sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+    uint32 action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
     GetEluna()->OnGossipSelectCode(player, me, sender, action, code);
   }
 
