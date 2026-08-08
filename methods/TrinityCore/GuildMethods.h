@@ -8,6 +8,11 @@
 #ifndef GUILDMETHODS_H
 #define GUILDMETHODS_H
 
+// SKYFIRE: hace falta explicito para GCC. Estos ficheros usan SF_SHARED_GUARD,
+// que es std::shared_lock<std::shared_mutex>; MSVC arrastra la cabecera por
+// inclusion transitiva y GCC no, asi que sin esto el build de Linux se cae.
+#include <shared_mutex>
+
 /***
  * Inherits all methods from: none
  */
