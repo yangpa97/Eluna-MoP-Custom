@@ -1938,7 +1938,7 @@ namespace LuaUnit
 #if ELUNA_EXPANSION >= EXP_WOTLK
         unit->GetMotionMaster()->MoveJump(x, y, z, zSpeed, maxHeight, id);
 #else
-        Position pos(x, y, z);
+        Position pos; pos.Relocate(x, y, z);
         unit->GetMotionMaster()->MoveJump(pos, zSpeed, maxHeight, id);
 #endif
         return 0;

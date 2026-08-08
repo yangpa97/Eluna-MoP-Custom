@@ -2010,7 +2010,7 @@ namespace LuaUnit
         float maxHeight = E->CHECKVAL<float>(6);
         uint32 id = E->CHECKVAL<uint32>(7, 0);
 
-        Position pos(x, y, z);
+        Position pos; pos.Relocate(x, y, z);
 
         unit->GetMotionMaster()->MoveJump(pos, zSpeed, maxHeight, id);
         return 0;
