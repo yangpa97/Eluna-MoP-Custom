@@ -2823,6 +2823,52 @@ int ToggleAFK(Eluna * /*E*/, Player *player) {
  * [EquipmentSlots] or [InventorySlots]
  * @return [Item] equippedItem : item or nil if equipping failed
  */
+/**
+ * [SKYFIRE CUSTOM] Equipa un item POR LAS BRAVAS en la mano principal:
+ * si la mano esta ocupada, guarda el arma actual en la mochila (idiom de
+ * AutoUnequipOffhandIfNeed) y luego equipa el item nuevo y lo ENCARA
+ * (sheath ranged). Pensado para armas escenicas de eventos (Trabuco del
+ * Cazador 402300, exento de competencia en Player::CanUseItem).
+ *
+ * @param uint32 entry : entry del item a equipar
+ * @return bool ok : true si quedo equipado
+ */
+int ForceEquip(Eluna *E, Player *player) {
+  uint32 entry = E->CHECKVAL<uint32>(2);
+  uint8 slot = EQUIPMENT_SLOT_MAINHAND;
+
+  // liberar la mano principal hacia la mochila (seguro: si no cabe, no tocamos)
+  if (Item *old = player->GetItemByPos(INVENTORY_SLOT_BAG_0, slot)) {
+    ItemPosCountVec dest;
+    if (player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, old, false) !=
+        EQUIP_ERR_OK) {
+      E->Push(false);
+      return 1;
+    }
+    player->RemoveItem(INVENTORY_SLOT_BAG_0, slot, true);
+    player->StoreItem(dest, old, true);
+  }
+
+  Item *item = Item::CreateItem(entry, 1, player);
+  if (!item) {
+    E->Push(false);
+    return 1;
+  }
+
+  uint16 eDest = 0;
+  InventoryResult result = player->CanEquipItem(slot, eDest, item, false);
+  if (result != EQUIP_ERR_OK) {
+    delete item;
+    E->Push(false);
+    return 1;
+  }
+  player->ItemAddedQuestCheck(entry, 1);
+  Item *equipped = player->EquipItem(eDest, item, true);
+  player->SetSheath(SHEATH_STATE_RANGED);   // encarado desde ya
+  E->Push(equipped != NULL);
+  return 1;
+}
+
 int EquipItem(Eluna *E, Player *player) {
   uint16 dest = 0;
   Item *item = E->CHECKOBJ<Item>(2, false);
@@ -3905,6 +3951,7 @@ ElunaRegister<Player> PlayerMethods[] = {
     {"RemoveLifetimeKills", &LuaPlayer::RemoveLifetimeKills},
     {"ResurrectPlayer", &LuaPlayer::ResurrectPlayer},
     {"EquipItem", &LuaPlayer::EquipItem},
+    {"ForceEquip", &LuaPlayer::ForceEquip},
     {"ResetSpellCooldown", &LuaPlayer::ResetSpellCooldown},
     {"ResetTypeCooldowns", &LuaPlayer::ResetTypeCooldowns},
     {"ResetAllCooldowns", &LuaPlayer::ResetAllCooldowns},
