@@ -156,10 +156,13 @@ const char *Save() const override;
     instance->GetEluna()->OnPlayerEnterInstance(this, player);
   }
 
-#if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE
+// SkyFire hereda estos dos de ZoneScript, igual que TrinityCore: se llaman
+// OnGameObjectCreate/OnCreatureCreate y los dispara AddToWorld a traves de
+// m_zoneScript. Antes la rama de SkyFire declaraba "OnObjectCreate" SIN
+// override, que no corresponde a ningun virtual: compilaba y no se llamaba
+// jamas. El override es justo lo que impide que eso vuelva a pasar en silencio.
+#if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE || defined ELUNA_SKYFIRE
   void OnGameObjectCreate(GameObject *gameobject) override
-#elif defined ELUNA_SKYFIRE
-  void OnObjectCreate(GameObject *gameobject)
 #else
 void OnObjectCreate(GameObject *gameobject) override
 #endif
@@ -167,11 +170,7 @@ void OnObjectCreate(GameObject *gameobject) override
     instance->GetEluna()->OnGameObjectCreate(this, gameobject);
   }
 
-#ifndef ELUNA_SKYFIRE
   void OnCreatureCreate(Creature *creature) override
-#else
-  void OnCreatureCreate(Creature *creature)
-#endif
   {
     instance->GetEluna()->OnCreatureCreate(this, creature);
   }
