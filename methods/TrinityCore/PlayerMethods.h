@@ -2835,38 +2835,53 @@ int ToggleAFK(Eluna * /*E*/, Player *player) {
  */
 int ForceEquip(Eluna *E, Player *player) {
   uint32 entry = E->CHECKVAL<uint32>(2);
-  uint8 slot = EQUIPMENT_SLOT_MAINHAND;
 
-  // liberar la mano principal hacia la mochila (seguro: si no cabe, no tocamos)
+  Item *item = Item::CreateItem(entry, 1, player);
+  if (!item) {
+    E->Push(false);
+    E->Push(0);
+    return 2;
+  }
+
+  // El SLOT lo decide el CORE a partir del InventoryType, no el llamante: un
+  // trabuco es INVTYPE_RANGEDRIGHT y va al slot RANGED (17), no a la mano (15).
+  // Forzar MAINHAND hacia hacer fallar CanEquipItem en silencio.
+  uint16 tanteo = 0;
+  if (player->CanEquipItem(NULL_SLOT, tanteo, item, true) != EQUIP_ERR_OK) {
+    delete item;
+    E->Push(false);
+    E->Push(0);
+    return 2;
+  }
+  uint8 slot = uint8(tanteo & 255);
+
+  // liberar ESE slot hacia la mochila (seguro: si no cabe, no se toca nada)
   if (Item *old = player->GetItemByPos(INVENTORY_SLOT_BAG_0, slot)) {
     ItemPosCountVec dest;
     if (player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, old, false) !=
         EQUIP_ERR_OK) {
+      delete item;
       E->Push(false);
-      return 1;
+      E->Push(0);
+      return 2;
     }
     player->RemoveItem(INVENTORY_SLOT_BAG_0, slot, true);
     player->StoreItem(dest, old, true);
   }
 
-  Item *item = Item::CreateItem(entry, 1, player);
-  if (!item) {
-    E->Push(false);
-    return 1;
-  }
-
   uint16 eDest = 0;
-  InventoryResult result = player->CanEquipItem(slot, eDest, item, false);
-  if (result != EQUIP_ERR_OK) {
+  if (player->CanEquipItem(slot, eDest, item, false) != EQUIP_ERR_OK) {
     delete item;
     E->Push(false);
-    return 1;
+    E->Push(0);
+    return 2;
   }
   player->ItemAddedQuestCheck(entry, 1);
   Item *equipped = player->EquipItem(eDest, item, true);
   player->SetSheath(SHEATH_STATE_RANGED);   // encarado desde ya
   E->Push(equipped != NULL);
-  return 1;
+  E->Push(uint32(slot));                    // 2o retorno: donde acabo de verdad
+  return 2;
 }
 
 int EquipItem(Eluna *E, Player *player) {
