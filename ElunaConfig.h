@@ -12,6 +12,7 @@
 enum ElunaConfigBoolValues
 {
     CONFIG_ELUNA_ENABLED,
+    CONFIG_ELUNA_BOTS_FIRE_HOOKS, // los jugadores-bot (sesion sin socket) disparan hooks de jugador
     CONFIG_ELUNA_TRACEBACK,
     CONFIG_ELUNA_SCRIPT_RELOADER,
     CONFIG_ELUNA_ENABLE_UNSAFE,
@@ -53,6 +54,7 @@ public:
     const uint32& GetConfig(ElunaConfigUInt32Values index) const { return _configUInt32Values[index]; }
 
     bool IsElunaEnabled() { return GetConfig(CONFIG_ELUNA_ENABLED); }
+    bool BotsFireHooks() { return GetConfig(CONFIG_ELUNA_BOTS_FIRE_HOOKS); }
     bool UnsafeMethodsEnabled() { return GetConfig(CONFIG_ELUNA_ENABLE_UNSAFE); }
     bool DeprecatedMethodsEnabled() { return GetConfig(CONFIG_ELUNA_ENABLE_DEPRECATED); }
     bool IsReloadCommandEnabled() { return GetConfig(CONFIG_ELUNA_ENABLE_RELOAD_COMMAND); }

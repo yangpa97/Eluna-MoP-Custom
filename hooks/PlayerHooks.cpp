@@ -17,6 +17,16 @@
 
 using namespace Hooks;
 
+
+// Los bots del modulo playerbots son jugadores con sesion sin socket. Por
+// defecto NO disparan los hooks de jugador: los eventos de Lua (saludos,
+// watchers de zona, marcadores) estan escritos para humanos y con 40 bots
+// llenarian el mundo de ruido. Eluna.BotsDisparanHooks = 1 lo revierte.
+static inline bool ElunaSkipBot(Player *p) {
+  return p && p->GetSession() && p->GetSession()->IsBot() &&
+         !sElunaConfig->BotsFireHooks();
+}
+
 #define START_HOOK(EVENT)                                                      \
   auto binding = GetBinding<EventKey<PlayerEvents>>(REGTYPE_PLAYER);           \
   auto key = EventKey<PlayerEvents>(EVENT);                                    \
@@ -32,6 +42,7 @@ using namespace Hooks;
 void Eluna::OnLearnTalents(Player *pPlayer, uint32 talentId, uint32 talentRank,
                            uint32 spellid) {
   START_HOOK(PLAYER_EVENT_ON_LEARN_TALENTS);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(talentId);
   HookPush(talentRank);
@@ -41,6 +52,7 @@ void Eluna::OnLearnTalents(Player *pPlayer, uint32 talentId, uint32 talentRank,
 
 void Eluna::OnSkillChange(Player *pPlayer, uint32 skillId, uint32 skillValue) {
   START_HOOK(PLAYER_EVENT_ON_SKILL_CHANGE);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(skillId);
   HookPush(skillValue);
@@ -64,6 +76,7 @@ void Eluna::OnSkillChange(Player *pPlayer, uint32 skillId, uint32 skillValue) {
 
 void Eluna::OnLearnSpell(Player *pPlayer, uint32 spellId) {
   START_HOOK(PLAYER_EVENT_ON_LEARN_SPELL);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(spellId);
   CallAllFunctions(binding, key);
@@ -114,6 +127,7 @@ bool Eluna::OnCommand(Player *player, const char *text) {
 void Eluna::OnLootItem(Player *pPlayer, Item *pItem, uint32 count,
                        ObjectGuid guid) {
   START_HOOK(PLAYER_EVENT_ON_LOOT_ITEM);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(pItem);
   HookPush(count);
@@ -123,6 +137,7 @@ void Eluna::OnLootItem(Player *pPlayer, Item *pItem, uint32 count,
 
 void Eluna::OnLootMoney(Player *pPlayer, uint32 amount) {
   START_HOOK(PLAYER_EVENT_ON_LOOT_MONEY);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(amount);
   CallAllFunctions(binding, key);
@@ -130,24 +145,28 @@ void Eluna::OnLootMoney(Player *pPlayer, uint32 amount) {
 
 void Eluna::OnFirstLogin(Player *pPlayer) {
   START_HOOK(PLAYER_EVENT_ON_FIRST_LOGIN);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   CallAllFunctions(binding, key);
 }
 
 void Eluna::OnRepop(Player *pPlayer) {
   START_HOOK(PLAYER_EVENT_ON_REPOP);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   CallAllFunctions(binding, key);
 }
 
 void Eluna::OnResurrect(Player *pPlayer) {
   START_HOOK(PLAYER_EVENT_ON_RESURRECT);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   CallAllFunctions(binding, key);
 }
 
 void Eluna::OnQuestAbandon(Player *pPlayer, uint32 questId) {
   START_HOOK(PLAYER_EVENT_ON_QUEST_ABANDON);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(questId);
   CallAllFunctions(binding, key);
@@ -156,6 +175,7 @@ void Eluna::OnQuestAbandon(Player *pPlayer, uint32 questId) {
 void Eluna::OnQuestStatusChanged(Player *pPlayer, uint32 questId,
                                  uint8 status) {
   START_HOOK(PLAYER_EVENT_ON_QUEST_STATUS_CHANGED);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(questId);
   HookPush(status);
@@ -164,6 +184,7 @@ void Eluna::OnQuestStatusChanged(Player *pPlayer, uint32 questId,
 
 void Eluna::OnEquip(Player *pPlayer, Item *pItem, uint8 bag, uint8 slot) {
   START_HOOK(PLAYER_EVENT_ON_EQUIP);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(pItem);
   HookPush(bag);
@@ -192,6 +213,7 @@ InventoryResult Eluna::OnCanUseItem(const Player *pPlayer, uint32 itemEntry) {
 }
 void Eluna::OnPlayerEnterCombat(Player *pPlayer, Unit *pEnemy) {
   START_HOOK(PLAYER_EVENT_ON_ENTER_COMBAT);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(pEnemy);
   CallAllFunctions(binding, key);
@@ -199,12 +221,14 @@ void Eluna::OnPlayerEnterCombat(Player *pPlayer, Unit *pEnemy) {
 
 void Eluna::OnPlayerLeaveCombat(Player *pPlayer) {
   START_HOOK(PLAYER_EVENT_ON_LEAVE_COMBAT);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   CallAllFunctions(binding, key);
 }
 
 void Eluna::OnPVPKill(Player *pKiller, Player *pKilled) {
   START_HOOK(PLAYER_EVENT_ON_KILL_PLAYER);
+  if (ElunaSkipBot(pKiller)) return;
   HookPush(pKiller);
   HookPush(pKilled);
   CallAllFunctions(binding, key);
@@ -212,6 +236,7 @@ void Eluna::OnPVPKill(Player *pKiller, Player *pKilled) {
 
 void Eluna::OnCreatureKill(Player *pKiller, Creature *pKilled) {
   START_HOOK(PLAYER_EVENT_ON_KILL_CREATURE);
+  if (ElunaSkipBot(pKiller)) return;
   HookPush(pKiller);
   HookPush(pKilled);
   CallAllFunctions(binding, key);
@@ -219,6 +244,7 @@ void Eluna::OnCreatureKill(Player *pKiller, Creature *pKilled) {
 
 void Eluna::OnPlayerKilledByCreature(Creature *pKiller, Player *pKilled) {
   START_HOOK(PLAYER_EVENT_ON_KILLED_BY_CREATURE);
+  if (ElunaSkipBot(pKilled)) return;
   HookPush(pKiller);
   HookPush(pKilled);
   CallAllFunctions(binding, key);
@@ -226,6 +252,7 @@ void Eluna::OnPlayerKilledByCreature(Creature *pKiller, Player *pKilled) {
 
 void Eluna::OnPlayerKilledByEnvironment(Player *pKilled, uint8 damageType) {
   START_HOOK(PLAYER_EVENT_ON_ENVIRONMENTAL_DEATH);
+  if (ElunaSkipBot(pKilled)) return;
   HookPush(pKilled);
   HookPush(damageType);
   CallAllFunctions(binding, key);
@@ -233,6 +260,7 @@ void Eluna::OnPlayerKilledByEnvironment(Player *pKilled, uint8 damageType) {
 
 void Eluna::OnLevelChanged(Player *pPlayer, uint8 oldLevel) {
   START_HOOK(PLAYER_EVENT_ON_LEVEL_CHANGE);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(oldLevel);
   CallAllFunctions(binding, key);
@@ -240,6 +268,7 @@ void Eluna::OnLevelChanged(Player *pPlayer, uint8 oldLevel) {
 
 void Eluna::OnFreeTalentPointsChanged(Player *pPlayer, uint32 newPoints) {
   START_HOOK(PLAYER_EVENT_ON_TALENTS_CHANGE);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(newPoints);
   CallAllFunctions(binding, key);
@@ -247,6 +276,7 @@ void Eluna::OnFreeTalentPointsChanged(Player *pPlayer, uint32 newPoints) {
 
 void Eluna::OnTalentsReset(Player *pPlayer, bool noCost) {
   START_HOOK(PLAYER_EVENT_ON_TALENTS_RESET);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(noCost);
   CallAllFunctions(binding, key);
@@ -254,6 +284,7 @@ void Eluna::OnTalentsReset(Player *pPlayer, bool noCost) {
 
 void Eluna::OnMoneyChanged(Player *pPlayer, int32 &amount) {
   START_HOOK(PLAYER_EVENT_ON_MONEY_CHANGE);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(amount);
   int amountIndex = lua_gettop(L);
@@ -277,6 +308,7 @@ void Eluna::OnMoneyChanged(Player *pPlayer, int32 &amount) {
 #if ELUNA_EXPANSION >= EXP_CATA
 void Eluna::OnMoneyChanged(Player *pPlayer, int64 &amount) {
   START_HOOK(PLAYER_EVENT_ON_MONEY_CHANGE);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(amount);
   int amountIndex = lua_gettop(L);
@@ -300,6 +332,7 @@ void Eluna::OnMoneyChanged(Player *pPlayer, int64 &amount) {
 
 void Eluna::OnGiveXP(Player *pPlayer, uint32 &amount, Unit *pVictim) {
   START_HOOK(PLAYER_EVENT_ON_GIVE_XP);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(amount);
   HookPush(pVictim);
@@ -324,6 +357,7 @@ void Eluna::OnGiveXP(Player *pPlayer, uint32 &amount, Unit *pVictim) {
 void Eluna::OnReputationChange(Player *pPlayer, uint32 factionID,
                                int32 &standing, bool incremental) {
   START_HOOK(PLAYER_EVENT_ON_REPUTATION_CHANGE);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(factionID);
   HookPush(standing);
@@ -348,6 +382,7 @@ void Eluna::OnReputationChange(Player *pPlayer, uint32 factionID,
 
 void Eluna::OnDuelRequest(Player *pTarget, Player *pChallenger) {
   START_HOOK(PLAYER_EVENT_ON_DUEL_REQUEST);
+  if (ElunaSkipBot(pTarget)) return;
   HookPush(pTarget);
   HookPush(pChallenger);
   CallAllFunctions(binding, key);
@@ -355,6 +390,7 @@ void Eluna::OnDuelRequest(Player *pTarget, Player *pChallenger) {
 
 void Eluna::OnDuelStart(Player *pStarter, Player *pChallenger) {
   START_HOOK(PLAYER_EVENT_ON_DUEL_START);
+  if (ElunaSkipBot(pStarter)) return;
   HookPush(pStarter);
   HookPush(pChallenger);
   CallAllFunctions(binding, key);
@@ -362,6 +398,7 @@ void Eluna::OnDuelStart(Player *pStarter, Player *pChallenger) {
 
 void Eluna::OnDuelEnd(Player *pWinner, Player *pLoser, DuelCompleteType type) {
   START_HOOK(PLAYER_EVENT_ON_DUEL_END);
+  if (ElunaSkipBot(pWinner)) return;
   HookPush(pWinner);
   HookPush(pLoser);
   HookPush(static_cast<uint32>(type));
@@ -370,6 +407,7 @@ void Eluna::OnDuelEnd(Player *pWinner, Player *pLoser, DuelCompleteType type) {
 
 void Eluna::OnEmote(Player *pPlayer, uint32 emote) {
   START_HOOK(PLAYER_EVENT_ON_EMOTE);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(emote);
   CallAllFunctions(binding, key);
@@ -378,6 +416,7 @@ void Eluna::OnEmote(Player *pPlayer, uint32 emote) {
 void Eluna::OnTextEmote(Player *pPlayer, uint32 textEmote, uint32 emoteNum,
                         ObjectGuid guid) {
   START_HOOK(PLAYER_EVENT_ON_TEXT_EMOTE);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(textEmote);
   HookPush(emoteNum);
@@ -387,6 +426,7 @@ void Eluna::OnTextEmote(Player *pPlayer, uint32 textEmote, uint32 emoteNum,
 
 void Eluna::OnSpellCast(Player *pPlayer, Spell *pSpell, bool skipCheck) {
   START_HOOK(PLAYER_EVENT_ON_SPELL_CAST);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(pSpell);
   HookPush(skipCheck);
@@ -395,18 +435,21 @@ void Eluna::OnSpellCast(Player *pPlayer, Spell *pSpell, bool skipCheck) {
 
 void Eluna::OnLogin(Player *pPlayer) {
   START_HOOK(PLAYER_EVENT_ON_LOGIN);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   CallAllFunctions(binding, key);
 }
 
 void Eluna::OnLogout(Player *pPlayer) {
   START_HOOK(PLAYER_EVENT_ON_LOGOUT);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   CallAllFunctions(binding, key);
 }
 
 void Eluna::OnCreate(Player *pPlayer) {
   START_HOOK(PLAYER_EVENT_ON_CHARACTER_CREATE);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   CallAllFunctions(binding, key);
 }
@@ -419,6 +462,7 @@ void Eluna::OnDelete(uint32 guidlow) {
 
 void Eluna::OnSave(Player *pPlayer) {
   START_HOOK(PLAYER_EVENT_ON_SAVE);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   CallAllFunctions(binding, key);
 }
@@ -426,6 +470,7 @@ void Eluna::OnSave(Player *pPlayer) {
 void Eluna::OnBindToInstance(Player *pPlayer, Difficulty difficulty,
                              uint32 mapid, bool permanent) {
   START_HOOK(PLAYER_EVENT_ON_BIND_TO_INSTANCE);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(difficulty);
   HookPush(mapid);
@@ -435,6 +480,7 @@ void Eluna::OnBindToInstance(Player *pPlayer, Difficulty difficulty,
 
 void Eluna::OnUpdateZone(Player *pPlayer, uint32 newZone, uint32 newArea) {
   START_HOOK(PLAYER_EVENT_ON_UPDATE_ZONE);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(newZone);
   HookPush(newArea);
@@ -443,6 +489,7 @@ void Eluna::OnUpdateZone(Player *pPlayer, uint32 newZone, uint32 newArea) {
 
 void Eluna::OnUpdateArea(Player *pPlayer, uint32 oldArea, uint32 newArea) {
   START_HOOK(PLAYER_EVENT_ON_UPDATE_AREA);
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(oldArea);
   HookPush(newArea);
@@ -451,12 +498,14 @@ void Eluna::OnUpdateArea(Player *pPlayer, uint32 oldArea, uint32 newArea) {
 
 void Eluna::OnMapChanged(Player *player) {
   START_HOOK(PLAYER_EVENT_ON_MAP_CHANGE);
+  if (ElunaSkipBot(player)) return;
   HookPush(player);
   CallAllFunctions(binding, key);
 }
 
 void Eluna::OnAchievementComplete(Player *player, uint32 achievementId) {
   START_HOOK(PLAYER_EVENT_ON_ACHIEVEMENT_COMPLETE);
+  if (ElunaSkipBot(player)) return;
   HookPush(player);
   HookPush(achievementId);
   CallAllFunctions(binding, key);
@@ -485,6 +534,7 @@ bool Eluna::OnSendMail(Player *sender, ObjectGuid recipientGuid) {
 
 void Eluna::OnDiscoverArea(Player *player, uint32 area) {
   START_HOOK(PLAYER_EVENT_ON_DISCOVER_AREA);
+  if (ElunaSkipBot(player)) return;
   HookPush(player);
   HookPush(area);
   CallAllFunctions(binding, key);

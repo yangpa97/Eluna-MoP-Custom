@@ -322,6 +322,17 @@ int IsInGuild(Eluna *E, Player *player) {
  *
  * @return bool isGM
  */
+/**
+ * Returns 'true' if the [Player] is a playerbot (socketless session driven by
+ * the playerbots module), 'false' for a real client.
+ *
+ * @return bool isBot
+ */
+int IsBot(Eluna *E, Player *player) {
+  E->Push(player->GetSession() && player->GetSession()->IsBot());
+  return 1;
+}
+
 int IsGM(Eluna *E, Player *player) {
   E->Push(player->IsGameMaster());
   return 1;
@@ -3777,6 +3788,7 @@ ElunaRegister<Player> PlayerMethods[] = {
     // Getters
     {"GetSelection", &LuaPlayer::GetSelection},
     {"GetGMRank", &LuaPlayer::GetGMRank},
+    {"IsBot", &LuaPlayer::IsBot},
     {"GetGuildId", &LuaPlayer::GetGuildId},
     {"GetCoinage", &LuaPlayer::GetCoinage},
     {"GetTeam", &LuaPlayer::GetTeam},
