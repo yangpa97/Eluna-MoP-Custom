@@ -160,7 +160,11 @@ if(UNIX)
   target_compile_definitions(lualib PRIVATE LUA_USE_LINUX)
 endif()
 
-add_definitions(-DELUNA_SKYFIRE -DELUNA)
+# ELUNA_EXPANSION se pasa NUMERICO (4 == EXP_MOP) a proposito: ElunaIncludes.h
+# usa las comparaciones `#if ELUNA_EXPANSION > EXP_CLASSIC` ANTES de incluir
+# ElunaUtility.h, donde viven las constantes EXP_*. Con la forma simbolica esas
+# comparaciones se evaluarian contra 0 y elegirian la rama equivocada.
+add_definitions(-DELUNA_SKYFIRE -DELUNA -DELUNA_EXPANSION=4)
 
 # Eluna Engine Sources
 file(GLOB eluna_sources

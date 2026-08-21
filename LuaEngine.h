@@ -103,6 +103,15 @@ class TemporarySummon;
 typedef TemporarySummon TempSummon;
 #endif
 
+#if defined ELUNA_SKYFIRE
+// SkyFire (MoP 5.4.8) cae en esta rama porque no es TrinityCore, pero NO es de
+// la familia MaNGOS: su clase de vehiculo se llama Vehicle (no VehicleInfo) y
+// la dificultad de instancia es DifficultyID (no Difficulty). Sin este bloque,
+// con ELUNA_EXPANSION=EXP_MOP el typedef de abajo renombraria Vehicle a un tipo
+// incompleto y se llevaria por delante VehicleMethods y VehicleHooks.
+class Vehicle;
+typedef DifficultyID Difficulty;
+#else
 #if ELUNA_EXPANSION == EXP_CLASSIC
 typedef int Difficulty;
 #endif
@@ -110,6 +119,7 @@ typedef int Difficulty;
 #if ELUNA_EXPANSION >= EXP_WOTLK
 class VehicleInfo;
 typedef VehicleInfo Vehicle;
+#endif
 #endif
 #endif
 

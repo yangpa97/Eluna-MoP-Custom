@@ -14,6 +14,8 @@
 #define EXP_TBC 1
 #define EXP_WOTLK 2
 #define EXP_CATA 3
+// SkyFire: Mists of Pandaria 5.4.8. Upstream no llegaba mas alla de Cata.
+#define EXP_MOP 4
 
 #if !defined ELUNA_CMANGOS
 #include "SharedDefines.h"

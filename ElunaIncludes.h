@@ -262,7 +262,9 @@ typedef Opcodes OpcodesList;
 #define SPELL_AURA_MOD_KILL_XP_PCT SPELL_AURA_MOD_XP_PCT
 #endif
 
-#if !defined ELUNA_MANGOS
+// SkyFire ya tiene UNIT_BYTE2_FLAG_SANCTUARY como enum y no tiene
+// UNIT_BYTE2_FLAG_SUPPORTABLE: renombrarlo romperia Unit:SetSanctuary().
+#if !defined ELUNA_MANGOS && !defined ELUNA_SKYFIRE
 #if ELUNA_EXPANSION >= EXP_WOTLK
 #define UNIT_BYTE2_FLAG_SANCTUARY UNIT_BYTE2_FLAG_SUPPORTABLE
 #endif

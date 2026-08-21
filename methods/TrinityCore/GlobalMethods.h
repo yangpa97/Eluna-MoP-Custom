@@ -930,6 +930,40 @@ int RegisterBGEvent(Eluna *E) {
 }
 
 /**
+ * Registers a [Vehicle] event handler.
+ *
+ * In Multistate mode (default), events are either registered to the WORLD state
+ * (-1) or the MAP states (map ID). These events will only ever trigger on their
+ * respective state.
+ *
+ * In Compatibility mode, all events are registered to the WORLD state (-1).
+ *
+ * @table
+ * @columns [ID, Event, State, Parameters, Comment]
+ * @values [1, ON_INSTALL, "MAP", <event: number, vehicle: Vehicle>, ""]
+ * @values [2, ON_UNINSTALL, "MAP", <event: number, vehicle: Vehicle>, ""]
+ * @values [4, ON_INSTALL_ACCESSORY, "MAP", <event: number, vehicle: Vehicle,
+ * accessory: Creature>, ""]
+ * @values [5, ON_ADD_PASSENGER, "MAP", <event: number, vehicle: Vehicle,
+ * passenger: Unit, seatId: number>, ""]
+ * @values [6, ON_REMOVE_PASSENGER, "MAP", <event: number, vehicle: Vehicle,
+ * passenger: Unit>, ""]
+ *
+ * @proto cancel = (event, function)
+ * @proto cancel = (event, function, shots)
+ *
+ * @param uint32 event : [Vehicle] event Id, refer to table above
+ * @param function function : function to register
+ * @param uint32 shots = 0 : the number of times the function will be called, 0
+ * means "always call this function"
+ *
+ * @return function cancel : a function that cancels the binding when called
+ */
+int RegisterVehicleEvent(Eluna *E) {
+  return RegisterEventHelper(E, Hooks::REGTYPE_VEHICLE);
+}
+
+/**
  * Registers a [WorldPacket] event handler.
  *
  * In Multistate mode (default), events are either registered to the WORLD state
@@ -3297,6 +3331,7 @@ ElunaRegister<> GlobalMethods[] = {
     {"RegisterPlayerGossipEvent",
      &LuaGlobalFunctions::RegisterPlayerGossipEvent},
     {"RegisterBGEvent", &LuaGlobalFunctions::RegisterBGEvent},
+    {"RegisterVehicleEvent", &LuaGlobalFunctions::RegisterVehicleEvent},
     {"RegisterMapEvent", &LuaGlobalFunctions::RegisterMapEvent},
     {"RegisterInstanceEvent", &LuaGlobalFunctions::RegisterInstanceEvent},
 
