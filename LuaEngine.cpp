@@ -677,9 +677,15 @@ int Eluna::Register(std::underlying_type_t<Hooks::RegisterTypes> regtype,
                     uint32 event_id, int functionRef, uint32 shots) {
   switch (regtype) {
   case Hooks::REGTYPE_SERVER:
-    if (event_id < Hooks::SERVER_EVENT_COUNT)
+    if (event_id < Hooks::SERVER_EVENT_COUNT) {
+      // Los tres eventos de paquete del carril SERVER encienden el atajo.
+      if (event_id == Hooks::SERVER_EVENT_ON_PACKET_RECEIVE ||
+          event_id == Hooks::SERVER_EVENT_ON_PACKET_RECEIVE_UNKNOWN ||
+          event_id == Hooks::SERVER_EVENT_ON_PACKET_SEND)
+        hasPacketHooks = true;
       return RegisterBasicBinding<Hooks::ServerEvents>(this, regtype, event_id,
                                                        functionRef, shots);
+    }
     break;
 
   case Hooks::REGTYPE_PLAYER:
@@ -719,6 +725,7 @@ int Eluna::Register(std::underlying_type_t<Hooks::RegisterTypes> regtype,
         luaL_error(L, "Couldn't find a creature with (ID: %d)!", entry);
         return 0; // Stack: (empty)
       }
+      hasPacketHooks = true;
       return RegisterEntryBinding<Hooks::PacketEvents>(
           this, regtype, entry, event_id, functionRef, shots);
     }

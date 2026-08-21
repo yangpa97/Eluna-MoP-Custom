@@ -203,6 +203,15 @@ private:
 
   std::array<std::unique_ptr<BaseBindingMap>, Hooks::REGTYPE_COUNT> bindingMaps;
 
+  // Atajo barato para el camino mas caliente del servidor. Los hooks de
+  // paquete se consultarian en CADA paquete que entra o sale, y resolver el
+  // binding cuesta un dynamic_cast por consulta. Este flag lo pone Register()
+  // cuando algun script registra de verdad un hook de paquete, para que el
+  // core pueda saltarse la llamada entera con un solo test booleano. Solo pasa
+  // de false a true: si un reload retira los hooks, se pierde la optimizacion
+  // pero nunca la correccion.
+  bool hasPacketHooks = false;
+
   template <typename T> void CreateBinding(Hooks::RegisterTypes type) {
     auto index =
         static_cast<std::underlying_type_t<Hooks::RegisterTypes>>(type);
@@ -323,6 +332,11 @@ private:
 public:
   lua_State *L;
   std::unique_ptr<EventMgr> eventMgr;
+
+  /// True si algun script tiene enganchado un hook de paquete. Ver el
+  /// comentario de hasPacketHooks: existe para que el core no pague por
+  /// paquete cuando nadie usa esta familia.
+  bool HasPacketHooks() const { return hasPacketHooks; }
 
 #if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE
   QueryCallbackProcessor &GetQueryProcessor() { return queryProcessor; }
