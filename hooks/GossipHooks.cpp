@@ -14,12 +14,14 @@
 using namespace Hooks;
 
 #define START_HOOK(REGTYPE, EVENT, ENTRY) \
+    if (!HasBindings(REGTYPE)) return;                                         \
     auto binding = GetBinding<EntryKey<GossipEvents>>(REGTYPE);\
     auto key = EntryKey<GossipEvents>(EVENT, ENTRY);\
     if (!binding->HasBindingsFor(key))\
         return;
 
 #define START_HOOK_WITH_RETVAL(REGTYPE, EVENT, ENTRY, RETVAL) \
+    if (!HasBindings(REGTYPE)) return RETVAL;                                  \
     auto binding = GetBinding<EntryKey<GossipEvents>>(REGTYPE);\
     auto key = EntryKey<GossipEvents>(EVENT, ENTRY);\
     if (!binding->HasBindingsFor(key))\
@@ -93,6 +95,7 @@ void Eluna::HandleGossipSelectOption(Player* pPlayer, uint32 menuId, uint32 send
 bool Eluna::OnItemGossip(Player* pPlayer, Item* pItem, SpellCastTargets const& /*targets*/)
 {
     START_HOOK_WITH_RETVAL(REGTYPE_ITEM_GOSSIP, GOSSIP_EVENT_ON_HELLO, pItem->GetEntry(), true);
+    if (ElunaSkipBot(pPlayer)) return true;
 #if defined ELUNA_CMANGOS && ELUNA_EXPANSION < EXP_CATA
     pPlayer->GetPlayerMenu()->ClearMenus();
 #else

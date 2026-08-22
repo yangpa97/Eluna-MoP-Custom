@@ -15,6 +15,7 @@
 using namespace Hooks;
 
 #define START_HOOK(EVENT, AI) \
+    if (!HasBindings(REGTYPE_MAP) && !HasBindings(REGTYPE_INSTANCE)) return;   \
     auto MapEventBindings = GetBinding<EntryKey<InstanceEvents>>(REGTYPE_MAP);\
     auto InstanceEventBindings = GetBinding<EntryKey<InstanceEvents>>(REGTYPE_INSTANCE);\
     auto mapKey = EntryKey<InstanceEvents>(EVENT, AI->instance->GetId());\
@@ -25,6 +26,7 @@ using namespace Hooks;
     HookPush<Map>(AI->instance)
 
 #define START_HOOK_WITH_RETVAL(EVENT, AI, RETVAL) \
+    if (!HasBindings(REGTYPE_MAP) && !HasBindings(REGTYPE_INSTANCE)) return RETVAL; \
     auto MapEventBindings = GetBinding<EntryKey<InstanceEvents>>(REGTYPE_MAP);\
     auto InstanceEventBindings = GetBinding<EntryKey<InstanceEvents>>(REGTYPE_INSTANCE);\
     auto mapKey = EntryKey<InstanceEvents>(EVENT, AI->instance->GetId());\

@@ -169,6 +169,7 @@ void Eluna::OpenLua() {
 
 void Eluna::CreateBindStores() {
   DestroyBindStores();
+  hasBindings.fill(false);
 
   CreateBinding<EventKey<Hooks::ServerEvents>>(Hooks::REGTYPE_SERVER);
   CreateBinding<EventKey<Hooks::PlayerEvents>>(Hooks::REGTYPE_PLAYER);
@@ -636,6 +637,7 @@ template <typename K>
 int RegisterBasicBinding(Eluna *e,
                          std::underlying_type_t<Hooks::RegisterTypes> regtype,
                          uint32 event_id, int functionRef, uint32 shots) {
+  e->MarkBindings(regtype);
   typedef EventKey<K> Key;
   auto binding = e->GetBinding<Key>(regtype);
   auto key = Key(static_cast<K>(event_id));
@@ -649,6 +651,7 @@ int RegisterEntryBinding(Eluna *e,
                          std::underlying_type_t<Hooks::RegisterTypes> regtype,
                          uint32 entry, uint32 event_id, int functionRef,
                          uint32 shots) {
+  e->MarkBindings(regtype);
   typedef EntryKey<K> Key;
   auto binding = e->GetBinding<Key>(regtype);
   auto key = Key(static_cast<K>(event_id), entry);
@@ -662,6 +665,7 @@ int RegisterUniqueBinding(Eluna *e,
                           std::underlying_type_t<Hooks::RegisterTypes> regtype,
                           ObjectGuid guid, uint32 instanceId, uint32 event_id,
                           int functionRef, uint32 shots) {
+  e->MarkBindings(regtype);
   typedef UniqueObjectKey<K> Key;
   auto binding = e->GetBinding<Key>(regtype);
   auto key = Key(static_cast<K>(event_id), guid, instanceId);

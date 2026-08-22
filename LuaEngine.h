@@ -212,6 +212,14 @@ private:
   // pero nunca la correccion.
   bool hasPacketHooks = false;
 
+  // Generalizacion del atajo anterior a TODAS las familias (auditoria del
+  // 2026-08-21, hallazgo H1). START_HOOK hacia GetBinding -- un dynamic_cast --
+  // antes de mirar si habia algo registrado, y eso se paga en cada tick de
+  // cada gameobject del mundo aunque nadie use la familia. Ahora cada macro
+  // consulta primero este bool. Lo enciende MarkBindings() desde los helpers de
+  // Register; se resetea al crear los stores (nuevo estado Lua).
+  std::array<bool, Hooks::REGTYPE_COUNT> hasBindings{};
+
   template <typename T> void CreateBinding(Hooks::RegisterTypes type) {
     auto index =
         static_cast<std::underlying_type_t<Hooks::RegisterTypes>>(type);
@@ -337,6 +345,16 @@ public:
   /// comentario de hasPacketHooks: existe para que el core no pague por
   /// paquete cuando nadie usa esta familia.
   bool HasPacketHooks() const { return hasPacketHooks; }
+
+  /// True si algun script registro algo en esa familia. Es lo primero que
+  /// comprueba cada START_HOOK: un bool antes del dynamic_cast de GetBinding.
+  bool HasBindings(std::underlying_type_t<Hooks::RegisterTypes> t) const {
+    return t < Hooks::REGTYPE_COUNT && hasBindings[t];
+  }
+  void MarkBindings(std::underlying_type_t<Hooks::RegisterTypes> t) {
+    if (t < Hooks::REGTYPE_COUNT)
+      hasBindings[t] = true;
+  }
 
 #if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE
   QueryCallbackProcessor &GetQueryProcessor() { return queryProcessor; }

@@ -13,12 +13,14 @@
 using namespace Hooks;
 
 #define START_HOOK(EVENT) \
+    if (!HasBindings(REGTYPE_GROUP)) return;                                   \
     auto binding = GetBinding<EventKey<GroupEvents>>(REGTYPE_GROUP);\
     auto key = EventKey<GroupEvents>(EVENT);\
     if (!binding->HasBindingsFor(key))\
         return;
 
 #define START_HOOK_WITH_RETVAL(EVENT, RETVAL) \
+    if (!HasBindings(REGTYPE_GROUP)) return RETVAL;                            \
     auto binding = GetBinding<EventKey<GroupEvents>>(REGTYPE_GROUP);\
     auto key = EventKey<GroupEvents>(EVENT);\
     if (!binding->HasBindingsFor(key))\
@@ -77,6 +79,7 @@ void Eluna::OnCreate(Group* group, ObjectGuid leaderGuid, GroupType groupType)
 bool Eluna::OnMemberAccept(Group* group, Player* player)
 {
     START_HOOK_WITH_RETVAL(GROUP_EVENT_ON_MEMBER_ACCEPT, true);
+    if (ElunaSkipBot(player)) return true;
     HookPush(group);
     HookPush(player);
     return CallAllFunctionsBool(binding, key, true);

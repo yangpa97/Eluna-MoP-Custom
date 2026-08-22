@@ -15,6 +15,7 @@
 using namespace Hooks;
 
 #define START_HOOK(EVENT)                                                      \
+  if (!HasBindings(REGTYPE_BG)) return;                                        \
   auto binding = GetBinding<EventKey<BGEvents>>(REGTYPE_BG);                   \
   auto key = EventKey<BGEvents>(EVENT);                                        \
   if (!binding->HasBindingsFor(key))                                           \

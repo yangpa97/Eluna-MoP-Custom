@@ -13,6 +13,7 @@
 using namespace Hooks;
 
 #define START_HOOK(EVENT) \
+    if (!HasBindings(REGTYPE_GUILD)) return;                                   \
     auto binding = GetBinding<EventKey<GuildEvents>>(REGTYPE_GUILD);\
     auto key = EventKey<GuildEvents>(EVENT);\
     if (!binding->HasBindingsFor(key))\
@@ -21,6 +22,7 @@ using namespace Hooks;
 void Eluna::OnAddMember(Guild* guild, Player* player, uint32 plRank)
 {
     START_HOOK(GUILD_EVENT_ON_ADD_MEMBER);
+    if (ElunaSkipBot(player)) return;
     HookPush(guild);
     HookPush(player);
     HookPush(plRank);
@@ -30,6 +32,7 @@ void Eluna::OnAddMember(Guild* guild, Player* player, uint32 plRank)
 void Eluna::OnRemoveMember(Guild* guild, Player* player, bool isDisbanding)
 {
     START_HOOK(GUILD_EVENT_ON_REMOVE_MEMBER);
+    if (ElunaSkipBot(player)) return;
     HookPush(guild);
     HookPush(player);
     HookPush(isDisbanding);
@@ -182,6 +185,7 @@ void Eluna::OnItemMove(Guild* guild, Player* player, Item* pItem, bool isSrcBank
     bool isDestBank, uint8 destContainer, uint8 destSlotId)
 {
     START_HOOK(GUILD_EVENT_ON_ITEM_MOVE);
+    if (ElunaSkipBot(player)) return;
     HookPush(guild);
     HookPush(player);
     HookPush(pItem);

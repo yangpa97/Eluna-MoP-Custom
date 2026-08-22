@@ -14,12 +14,14 @@
 using namespace Hooks;
 
 #define START_HOOK(EVENT, SPELL) \
+    if (!HasBindings(REGTYPE_SPELL)) return;                                   \
     auto binding = GetBinding<EntryKey<SpellEvents>>(REGTYPE_SPELL);\
     auto key = EntryKey<SpellEvents>(EVENT, SPELL->m_spellInfo->Id);\
     if (!binding->HasBindingsFor(key))\
         return;
 
 #define START_HOOK_WITH_RETVAL(EVENT, SPELL, RETVAL) \
+    if (!HasBindings(REGTYPE_SPELL)) return RETVAL;                            \
     auto binding = GetBinding<EntryKey<SpellEvents>>(REGTYPE_SPELL);\
     auto key = EntryKey<SpellEvents>(EVENT, SPELL->m_spellInfo->Id);\
     if (!binding->HasBindingsFor(key))\

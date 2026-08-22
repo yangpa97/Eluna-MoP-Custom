@@ -17,12 +17,14 @@
 using namespace Hooks;
 
 #define START_HOOK(EVENT)                                                      \
+  if (!HasBindings(REGTYPE_SERVER)) return;                                    \
   auto binding = GetBinding<EventKey<ServerEvents>>(REGTYPE_SERVER);           \
   auto key = EventKey<ServerEvents>(EVENT);                                    \
   if (!binding->HasBindingsFor(key))                                           \
     return;
 
 #define START_HOOK_WITH_RETVAL(EVENT, RETVAL)                                  \
+  if (!HasBindings(REGTYPE_SERVER)) return RETVAL;                             \
   auto binding = GetBinding<EventKey<ServerEvents>>(REGTYPE_SERVER);           \
   auto key = EventKey<ServerEvents>(EVENT);                                    \
   if (!binding->HasBindingsFor(key))                                           \

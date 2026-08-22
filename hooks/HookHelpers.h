@@ -10,6 +10,39 @@
 #include "LuaEngine.h"
 #include "ElunaUtility.h"
 
+#include "ElunaConfig.h"
+#include "Player.h"
+#include "WorldSession.h"
+
+/*
+ * REGLA DE LOS BOTS (auditoria 2026-08-21, hallazgo H2).
+ *
+ * Los bots del modulo playerbots son jugadores con sesion sin socket. Los
+ * scripts Lua (saludos, watchers de zona, #pet, menus) estan escritos para
+ * humanos, y con 40 bots llenarian el mundo de ruido -- o peor: 40 bots
+ * hablando en el chat le dan trabajo al daemon de Ollama.
+ *
+ * Un bot NO dispara los hooks cuyo SUJETO es el jugador: las familias Player,
+ * Item, Gossip, el uso y las misiones de gameobject, aceptar grupo, los de
+ * miembro de hermandad y subir/bajar de vehiculo.
+ *
+ * Un bot SI dispara los hooks cuyo sujeto es OTRA entidad aunque el bot sea
+ * parte del evento: criatura (un boss en Lua tiene que ver que un bot le pega),
+ * instancia, mapa, mundo, BG, y los de grupo/hermandad que van por guid (el
+ * script vigila al grupo, no al bot). Filtrar ahi romperia esos scripts.
+ *
+ * Eluna.BotsDisparanHooks = 1 desactiva el filtro entero.
+ */
+static inline bool ElunaSkipBot(Player const* p) {
+  return p && p->GetSession() && p->GetSession()->IsBot() &&
+         !sElunaConfig->BotsFireHooks();
+}
+static inline bool ElunaSkipBot(Unit const* u) {
+  return u && u->GetTypeId() == TypeID::TYPEID_PLAYER &&
+         ElunaSkipBot(static_cast<Player const*>(u));
+}
+
+
 /*
  * Sets up the stack so that event handlers can be called.
  *

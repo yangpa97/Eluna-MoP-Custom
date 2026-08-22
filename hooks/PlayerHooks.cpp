@@ -18,22 +18,16 @@
 using namespace Hooks;
 
 
-// Los bots del modulo playerbots son jugadores con sesion sin socket. Por
-// defecto NO disparan los hooks de jugador: los eventos de Lua (saludos,
-// watchers de zona, marcadores) estan escritos para humanos y con 40 bots
-// llenarian el mundo de ruido. Eluna.BotsDisparanHooks = 1 lo revierte.
-static inline bool ElunaSkipBot(Player *p) {
-  return p && p->GetSession() && p->GetSession()->IsBot() &&
-         !sElunaConfig->BotsFireHooks();
-}
 
 #define START_HOOK(EVENT)                                                      \
+  if (!HasBindings(REGTYPE_PLAYER)) return;                                    \
   auto binding = GetBinding<EventKey<PlayerEvents>>(REGTYPE_PLAYER);           \
   auto key = EventKey<PlayerEvents>(EVENT);                                    \
   if (!binding->HasBindingsFor(key))                                           \
     return;
 
 #define START_HOOK_WITH_RETVAL(EVENT, RETVAL)                                  \
+  if (!HasBindings(REGTYPE_PLAYER)) return RETVAL;                             \
   auto binding = GetBinding<EventKey<PlayerEvents>>(REGTYPE_PLAYER);           \
   auto key = EventKey<PlayerEvents>(EVENT);                                    \
   if (!binding->HasBindingsFor(key))                                           \
@@ -119,6 +113,7 @@ bool Eluna::OnCommand(Player *player, const char *text) {
   }
 
   START_HOOK_WITH_RETVAL(PLAYER_EVENT_ON_COMMAND, true);
+  if (ElunaSkipBot(player)) return true;
   HookPush(player);
   HookPush(text);
   return CallAllFunctionsBool(binding, key, true);
@@ -194,6 +189,7 @@ void Eluna::OnEquip(Player *pPlayer, Item *pItem, uint8 bag, uint8 slot) {
 
 InventoryResult Eluna::OnCanUseItem(const Player *pPlayer, uint32 itemEntry) {
   START_HOOK_WITH_RETVAL(PLAYER_EVENT_ON_CAN_USE_ITEM, EQUIP_ERR_OK);
+  if (ElunaSkipBot(pPlayer)) return EQUIP_ERR_OK;
   InventoryResult result = EQUIP_ERR_OK;
   HookPush(pPlayer);
   HookPush(itemEntry);
@@ -513,6 +509,7 @@ void Eluna::OnAchievementComplete(Player *player, uint32 achievementId) {
 
 bool Eluna::OnTradeInit(Player *trader, Player *tradee) {
   START_HOOK_WITH_RETVAL(PLAYER_EVENT_ON_TRADE_INIT, true);
+  if (ElunaSkipBot(trader)) return true;
   HookPush(trader);
   HookPush(tradee);
   return CallAllFunctionsBool(binding, key, true);
@@ -520,6 +517,7 @@ bool Eluna::OnTradeInit(Player *trader, Player *tradee) {
 
 bool Eluna::OnTradeAccept(Player *trader, Player *tradee) {
   START_HOOK_WITH_RETVAL(PLAYER_EVENT_ON_TRADE_ACCEPT, true);
+  if (ElunaSkipBot(trader)) return true;
   HookPush(trader);
   HookPush(tradee);
   return CallAllFunctionsBool(binding, key, true);
@@ -527,6 +525,7 @@ bool Eluna::OnTradeAccept(Player *trader, Player *tradee) {
 
 bool Eluna::OnSendMail(Player *sender, ObjectGuid recipientGuid) {
   START_HOOK_WITH_RETVAL(PLAYER_EVENT_ON_SEND_MAIL, true);
+  if (ElunaSkipBot(sender)) return true;
   HookPush(sender);
   HookPush(recipientGuid);
   return CallAllFunctionsBool(binding, key, true);
@@ -542,6 +541,7 @@ void Eluna::OnDiscoverArea(Player *player, uint32 area) {
 
 bool Eluna::OnChat(Player *pPlayer, uint32 type, uint32 lang,
                    std::string &msg) {
+  if (ElunaSkipBot(pPlayer)) return true;
   if (lang == static_cast<uint32>(Language::LANG_ADDON))
     return OnAddonMessage(pPlayer, type, msg, NULL, NULL, NULL, NULL);
 
@@ -571,6 +571,7 @@ bool Eluna::OnChat(Player *pPlayer, uint32 type, uint32 lang,
 
 bool Eluna::OnChat(Player *pPlayer, uint32 type, uint32 lang, std::string &msg,
                    Group *pGroup) {
+  if (ElunaSkipBot(pPlayer)) return true;
   if (lang == static_cast<uint32>(Language::LANG_ADDON))
     return OnAddonMessage(pPlayer, type, msg, NULL, NULL, pGroup, NULL);
 
@@ -601,6 +602,7 @@ bool Eluna::OnChat(Player *pPlayer, uint32 type, uint32 lang, std::string &msg,
 
 bool Eluna::OnChat(Player *pPlayer, uint32 type, uint32 lang, std::string &msg,
                    Guild *pGuild) {
+  if (ElunaSkipBot(pPlayer)) return true;
   if (lang == static_cast<uint32>(Language::LANG_ADDON))
     return OnAddonMessage(pPlayer, type, msg, NULL, pGuild, NULL, NULL);
 
@@ -631,6 +633,7 @@ bool Eluna::OnChat(Player *pPlayer, uint32 type, uint32 lang, std::string &msg,
 
 bool Eluna::OnChat(Player *pPlayer, uint32 type, uint32 lang, std::string &msg,
                    Channel *pChannel) {
+  if (ElunaSkipBot(pPlayer)) return true;
   if (lang == static_cast<uint32>(Language::LANG_ADDON))
     return OnAddonMessage(pPlayer, type, msg, NULL, NULL, NULL, pChannel);
 
@@ -661,6 +664,7 @@ bool Eluna::OnChat(Player *pPlayer, uint32 type, uint32 lang, std::string &msg,
 
 bool Eluna::OnChat(Player *pPlayer, uint32 type, uint32 lang, std::string &msg,
                    Player *pReceiver) {
+  if (ElunaSkipBot(pPlayer)) return true;
   if (lang == static_cast<uint32>(Language::LANG_ADDON))
     return OnAddonMessage(pPlayer, type, msg, pReceiver, NULL, NULL, NULL);
 

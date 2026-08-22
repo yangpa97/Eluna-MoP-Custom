@@ -15,12 +15,14 @@
 using namespace Hooks;
 
 #define START_HOOK(EVENT, ENTRY) \
+    if (!HasBindings(REGTYPE_GAMEOBJECT)) return;                              \
     auto binding = GetBinding<EntryKey<GameObjectEvents>>(REGTYPE_GAMEOBJECT);\
     auto key = EntryKey<GameObjectEvents>(EVENT, ENTRY);\
     if (!binding->HasBindingsFor(key))\
         return;
 
 #define START_HOOK_WITH_RETVAL(EVENT, ENTRY, RETVAL) \
+    if (!HasBindings(REGTYPE_GAMEOBJECT)) return RETVAL;                       \
     auto binding = GetBinding<EntryKey<GameObjectEvents>>(REGTYPE_GAMEOBJECT);\
     auto key = EntryKey<GameObjectEvents>(EVENT, ENTRY);\
     if (!binding->HasBindingsFor(key))\
@@ -47,6 +49,7 @@ void Eluna::UpdateAI(GameObject* pGameObject, uint32 diff)
 bool Eluna::OnQuestAccept(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest)
 {
     START_HOOK_WITH_RETVAL(GAMEOBJECT_EVENT_ON_QUEST_ACCEPT, pGameObject->GetEntry(), false);
+    if (ElunaSkipBot(pPlayer)) return false;
     HookPush(pPlayer);
     HookPush(pGameObject);
     HookPush(pQuest);
@@ -56,6 +59,7 @@ bool Eluna::OnQuestAccept(Player* pPlayer, GameObject* pGameObject, Quest const*
 bool Eluna::OnQuestReward(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest, uint32 opt)
 {
     START_HOOK_WITH_RETVAL(GAMEOBJECT_EVENT_ON_QUEST_REWARD, pGameObject->GetEntry(), false);
+    if (ElunaSkipBot(pPlayer)) return false;
     HookPush(pPlayer);
     HookPush(pGameObject);
     HookPush(pQuest);
@@ -66,6 +70,7 @@ bool Eluna::OnQuestReward(Player* pPlayer, GameObject* pGameObject, Quest const*
 void Eluna::GetDialogStatus(const Player* pPlayer, const GameObject* pGameObject)
 {
     START_HOOK(GAMEOBJECT_EVENT_ON_DIALOG_STATUS, pGameObject->GetEntry());
+    if (ElunaSkipBot(pPlayer)) return;
     HookPush(pPlayer);
     HookPush(pGameObject);
     CallAllFunctions(binding, key);
@@ -137,6 +142,7 @@ void Eluna::OnRemoveFromWorld(GameObject* pGameObject)
 bool Eluna::OnGameObjectUse(Player* pPlayer, GameObject* pGameObject)
 {
     START_HOOK_WITH_RETVAL(GAMEOBJECT_EVENT_ON_USE, pGameObject->GetEntry(), false);
+    if (ElunaSkipBot(pPlayer)) return false;
     HookPush(pGameObject);
     HookPush(pPlayer);
     return CallAllFunctionsBool(binding, key);

@@ -15,12 +15,14 @@
 using namespace Hooks;
 
 #define START_HOOK(EVENT, ENTRY)                                               \
+  if (!HasBindings(REGTYPE_ITEM)) return;                                      \
   auto binding = GetBinding<EntryKey<ItemEvents>>(REGTYPE_ITEM);               \
   auto key = EntryKey<ItemEvents>(EVENT, ENTRY);                               \
   if (!binding->HasBindingsFor(key))                                           \
     return;
 
 #define START_HOOK_WITH_RETVAL(EVENT, ENTRY, RETVAL)                           \
+  if (!HasBindings(REGTYPE_ITEM)) return RETVAL;                               \
   auto binding = GetBinding<EntryKey<ItemEvents>>(REGTYPE_ITEM);               \
   auto key = EntryKey<ItemEvents>(EVENT, ENTRY);                               \
   if (!binding->HasBindingsFor(key))                                           \
@@ -38,6 +40,7 @@ void Eluna::OnDummyEffect(WorldObject *pCaster, uint32 spellId,
 
 bool Eluna::OnQuestAccept(Player *pPlayer, Item *pItem, Quest const *pQuest) {
   START_HOOK_WITH_RETVAL(ITEM_EVENT_ON_QUEST_ACCEPT, pItem->GetEntry(), false);
+  if (ElunaSkipBot(pPlayer)) return false;
   HookPush(pPlayer);
   HookPush(pItem);
   HookPush(pQuest);
@@ -72,6 +75,7 @@ bool Eluna::OnUse(Player *pPlayer, Item *pItem,
 bool Eluna::OnItemUse(Player *pPlayer, Item *pItem,
                       SpellCastTargets const &targets) {
   START_HOOK_WITH_RETVAL(ITEM_EVENT_ON_USE, pItem->GetEntry(), true);
+  if (ElunaSkipBot(pPlayer)) return true;
   HookPush(pPlayer);
   HookPush(pItem);
 #if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE
@@ -107,6 +111,7 @@ bool Eluna::OnItemUse(Player *pPlayer, Item *pItem,
 
 bool Eluna::OnExpire(Player *pPlayer, ItemTemplate const *pProto) {
   START_HOOK_WITH_RETVAL(ITEM_EVENT_ON_EXPIRE, pProto->ItemId, false);
+  if (ElunaSkipBot(pPlayer)) return false;
   HookPush(pPlayer);
   HookPush(pProto->ItemId);
   return CallAllFunctionsBool(binding, key);
@@ -114,6 +119,7 @@ bool Eluna::OnExpire(Player *pPlayer, ItemTemplate const *pProto) {
 
 bool Eluna::OnRemove(Player *pPlayer, Item *pItem) {
   START_HOOK_WITH_RETVAL(ITEM_EVENT_ON_REMOVE, pItem->GetEntry(), false);
+  if (ElunaSkipBot(pPlayer)) return false;
   HookPush(pPlayer);
   HookPush(pItem);
   return CallAllFunctionsBool(binding, key);
@@ -121,6 +127,7 @@ bool Eluna::OnRemove(Player *pPlayer, Item *pItem) {
 
 void Eluna::OnAdd(Player *pPlayer, Item *pItem) {
   START_HOOK(ITEM_EVENT_ON_ADD, pItem->GetEntry());
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(pItem);
   CallAllFunctions(binding, key);
@@ -128,6 +135,7 @@ void Eluna::OnAdd(Player *pPlayer, Item *pItem) {
 
 void Eluna::OnItemEquip(Player *pPlayer, Item *pItem, uint8 slot) {
   START_HOOK(ITEM_EVENT_ON_EQUIP, pItem->GetEntry());
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(pItem);
   HookPush(slot);
@@ -136,6 +144,7 @@ void Eluna::OnItemEquip(Player *pPlayer, Item *pItem, uint8 slot) {
 
 void Eluna::OnItemUnEquip(Player *pPlayer, Item *pItem, uint8 slot) {
   START_HOOK(ITEM_EVENT_ON_UNEQUIP, pItem->GetEntry());
+  if (ElunaSkipBot(pPlayer)) return;
   HookPush(pPlayer);
   HookPush(pItem);
   HookPush(slot);
