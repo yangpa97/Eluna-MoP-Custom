@@ -12,11 +12,17 @@ los bloques van CO-UBICADOS con una llamada sScriptMgr->OnX(...) que existe
 verbatim en upstream. Asi que cada bloque se describe por su ANCLA -- una
 secuencia de 1 a 3 lineas significativas vecinas que upstream tiene tal cual y
 que es unica alli -- y este script lo inserta al lado, en el core que sea, con
-el formato que tenga. Las lineas se comparan normalizando espacios.
+el formato que tenga. Las lineas se comparan normalizando espacios y sin el
+comentario de cola; la sangria se reproduce RELATIVA al ancla.
 
 core_hooks.json lo genera gen_manifest.py desde nuestro arbol; no se edita a
 mano salvo la seccion "manual", que cubre lo que no tiene ancla (una funcion
-nueva entera, cabeceras sin marcador, el fichero nuevo).
+nueva entera, una lista de inicializacion, el fichero nuevo).
+
+Es idempotente: un bloque cuyas lineas de codigo ya estan todas en el fichero
+se da por instalado. Se ha verificado contra un checkout limpio de upstream:
+las 192 lineas Eluna del core quedan en el mismo contexto (linea anterior y
+posterior) que en nuestro arbol, y worldserver compila.
 
 USO
 ---
@@ -39,7 +45,13 @@ CRLF = "\r\n"
 LF = "\n"
 
 
+ELUNA = re.compile(r"Eluna|eluna|LuaEngine|ELUNA|LuaVal|lua_data")
+
+
 def sig(l):
+    """Forma normalizada de una linea: sin comentario de cola, espacios colapsados.
+    DEBE ser identica a la de gen_manifest.py."""
+    l = re.sub(r"(?<=[;){}\s])//.*$", "", l.strip())
     return re.sub(r"\s+", " ", l.strip())
 
 
@@ -72,11 +84,14 @@ def buscar_secuencia(sigs, seq, nth=None):
     return hits
 
 
-def firma_de(block):
-    """La linea de codigo mas larga del bloque: la mas dificil de encontrar por
-    casualidad en el fichero destino."""
+def ya_instalado(block, sigs):
+    """Un bloque cuenta como instalado si TODAS sus lineas de codigo estan ya en
+    el fichero (se mira el fichero tal como estaba antes de esta pasada). Mirar
+    solo la mas larga fallaba en los dos sentidos: un `if (pItem)` envolvente
+    existe en upstream, y el generico `if (Eluna* e = sWorld->GetEluna())` lo
+    habra puesto ya cualquier otro bloque."""
     codigo = [sig(l) for l in block if not TRIVIAL.match(sig(l))]
-    return max(codigo, key=len) if codigo else sig(block[0])
+    return bool(codigo) and all(l in sigs for l in codigo)
 
 
 def leer(ruta):
@@ -105,11 +120,7 @@ def aplicar(core, entradas, dry):
         inserciones = []
         for e in lista:
             a = e["anchor"]
-            # ya instalado? se mira la linea MAS ESPECIFICA del bloque (la mas
-            # larga de codigo): ni un comentario de cabecera -- puede existir en
-            # upstream -- ni el generico "if (Eluna* e = sWorld->GetEluna())", que
-            # ya lo habra puesto el bloque anterior.
-            if firma_de(e["block"]) in sigs:
+            if ya_instalado(e["block"], set(sigs)):
                 ok += 1
                 continue
             idx = buscar_secuencia(sigs, a["seq"], a.get("nth"))
@@ -121,13 +132,30 @@ def aplicar(core, entradas, dry):
             if a["position"] == "before":
                 sign_idx = [q for q, s in enumerate(sigs) if not TRIVIAL.match(s)]
                 i = sign_idx[sign_idx.index(i) - (len(a["seq"]) - 1)]
-            bloque = reindent(e["block"], indent_of(lines[i]))
-            inserciones.append((i + 1 if a["position"] == "after" else i, bloque))
+            # llaves que separaban el ancla del bloque en el arbol de origen: se
+            # saltan aqui tambien, para caer en el mismo ambito (p. ej. un
+            # "friend class Eluna;" que va DENTRO de "class WorldObject {")
+            pos = i + 1 if a["position"] == "after" else i
+            for br in a.get("braces", []):
+                if a["position"] == "after":
+                    while pos < len(sigs) and sigs[pos] == "": pos += 1
+                    if pos < len(sigs) and sigs[pos] == br: pos += 1
+                else:
+                    q = pos - 1
+                    while q >= 0 and sigs[q] == "": q -= 1
+                    if q >= 0 and sigs[q] == br: pos = q
+            # sangria: la del ancla mas el desplazamiento que tenia en el arbol de
+            # origen (los dos arboles usan 4 espacios); nunca negativa
+            ind = max(0, len(indent_of(lines[i]).expandtabs(4)) + a.get("indent_rel", 0))
+            bloque = reindent(e["block"], " " * ind)
+            inserciones.append((pos, len(inserciones), bloque))
             ok += 1
 
         if dry or not inserciones:
             continue
-        for i, bloque in sorted(inserciones, key=lambda x: -x[0]):
+        # de abajo arriba para no mover los indices; a igual posicion, el ultimo
+        # del manifiesto se inserta primero para que queden en el orden original
+        for i, _, bloque in sorted(inserciones, key=lambda x: (-x[0], -x[1])):
             lines[i:i] = bloque
         with open(ruta, "w", encoding="utf-8", newline="") as f:
             f.write(nl.join(lines))
@@ -159,7 +187,7 @@ def manual(core, m, dry):
         else:
             lines = raw.split(nl)
             sigs = [sig(l) for l in lines]
-            if firma_de(item["block"]) in sigs:
+            if ya_instalado(item["block"], set(sigs)):
                 hechos += 1
                 continue
             idx = [i for i, s in enumerate(sigs) if s == item["anchor"]]
