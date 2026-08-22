@@ -548,8 +548,23 @@ template <> unsigned long Eluna::CHECKVAL<unsigned long>(int narg) {
   return static_cast<unsigned long>(CHECKVAL<unsigned long long>(narg));
 }
 template <> ObjectGuid Eluna::CHECKVAL<ObjectGuid>(int narg) {
-  ObjectGuid *guid = CHECKOBJ<ObjectGuid>(narg, true);
-  return guid ? *guid : ObjectGuid();
+  // SKYFIRE: aqui ObjectGuid es un struct envoltorio de uint64 (ByteBuffer.h) y
+  // Object::GetGUID() devuelve uint64 a secas. Por la resolucion de sobrecargas,
+  // Push(obj->GetGUID()) elige Push(unsigned long long) y Lua recibe un userdata
+  // de uint64 -- pero los 32 metodos que PIDEN un guid hacian CHECKOBJ<ObjectGuid>
+  // y rechazaban ese userdata. El idioma mas comun de Eluna,
+  //     GetPlayerByGUID(p:GetGUID())
+  // fallaba con "ObjectGuid expected, got unsigned long long". Descubierto por el
+  // harness de bots el 2026-08-22. Se aceptan las tres formas en las que un guid
+  // puede llegar desde Lua.
+  if (ObjectGuid *guid = CHECKOBJ<ObjectGuid>(narg, false))
+    return *guid;
+  if (unsigned long long *raw = CHECKOBJ<unsigned long long>(narg, false))
+    return ObjectGuid(*raw);
+  if (lua_isnumber(L, narg))
+    return ObjectGuid(static_cast<uint64>(lua_tonumber(L, narg)));
+  luaL_argerror(L, narg, "ObjectGuid expected (ObjectGuid, uint64 or number)");
+  return ObjectGuid();
 }
 
 template <> Object *Eluna::CHECKOBJ<Object>(int narg, bool error) {
