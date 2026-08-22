@@ -51,6 +51,10 @@
 #include "TemporarySummon.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
+#if defined ELUNA_SKYFIRE
+#include "Weather.h"     // Map:SetWeather (clima por zona, WeatherMgr estatico)
+#include "WeatherMgr.h"
+#endif
 
 #if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE
 #include "Battleground.h"

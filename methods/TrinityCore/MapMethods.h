@@ -229,14 +229,22 @@ int GetWorldObject(Eluna *E, Map *map) {
  * @param float grade : the intensity/grade of the [Weather], ranges from 0 to 1
  */
 int SetWeather(Eluna *E, Map *map) {
-  (void)map; // ensure that the variable is referenced in order to pass compiler
-             // checks
-  // uint32 zoneId = E->CHECKVAL<uint32>(2);
-  // uint32 weatherType = E->CHECKVAL<uint32>(3);
-  // float grade = E->CHECKVAL<float>(4);
-
-  // if (Weather *weather = map->GetOrGenerateZoneDefaultWeather(zoneId))
-  //   weather->SetWeather((WeatherType)weatherType, grade);
+  uint32 zoneId = E->CHECKVAL<uint32>(2);
+  uint32 weatherType = E->CHECKVAL<uint32>(3);
+  float grade = E->CHECKVAL<float>(4);
+#ifdef ELUNA_SKYFIRE
+  // SKYFIRE: el clima es por ZONA y global (WeatherMgr estatico), no por mapa.
+  // Mismo camino que el comando .wchange. Se ignora `map` a proposito.
+  (void)map;
+  Weather *weather = WeatherMgr::FindWeather(zoneId);
+  if (!weather)
+    weather = WeatherMgr::AddWeather(zoneId);
+  if (weather)
+    weather->SetWeather(WeatherType(weatherType), grade);
+#else
+  if (Weather *weather = map->GetOrGenerateZoneDefaultWeather(zoneId))
+    weather->SetWeather((WeatherType)weatherType, grade);
+#endif
   return 0;
 }
 
