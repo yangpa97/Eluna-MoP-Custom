@@ -329,7 +329,7 @@ int IsInGuild(Eluna *E, Player *player) {
  * @return bool isBot
  */
 int IsBot(Eluna *E, Player *player) {
-  E->Push(player->GetSession() && player->GetSession()->IsBot());
+  E->Push(player->GetSession() && ElunaCompat::SessionIsBot(player->GetSession(), 0));
   return 1;
 }
 

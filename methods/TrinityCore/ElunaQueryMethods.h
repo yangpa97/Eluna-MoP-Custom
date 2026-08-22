@@ -279,39 +279,39 @@ int GetRow(Eluna *E, ElunaQuery *result) {
   lua_createtable(E->L, 0, col);
   int tbl = lua_gettop(E->L);
 
+  // SKYFIRE: la clave es el NOMBRE de la columna si la capa DB tiene metadatos
+  // (nuestro fork) y el INDICE 1-based si no (upstream limpio). El tipo se lee
+  // de Field::GetType(), que existe en los dos. Ver ElunaCompat.h.
   for (uint32 i = 0; i < col; ++i) {
-    QueryResultFieldMetadata const &fieldMetadata = RESULT->GetFieldMetadata(i);
-
-    E->Push(fieldMetadata.Alias);
+    std::string alias = ElunaCompat::FieldAlias(&*RESULT, i, 0);  // &* vale para shared_ptr y puntero crudo
+    if (alias.empty())
+      E->Push(i + 1);
+    else
+      E->Push(alias);
 
     if (row[i].IsNull())
       E->Push();
     else {
-      switch (fieldMetadata.Type) {
-      case DatabaseFieldTypes::UInt8:
-      // case DatabaseFieldTypes::Int8:
-      case DatabaseFieldTypes::UInt16:
-      // case DatabaseFieldTypes::Int16:
-      case DatabaseFieldTypes::UInt32:
-        // case DatabaseFieldTypes::Int32:
+      switch (row[i].GetType()) {
+      case MYSQL_TYPE_TINY:
+      case MYSQL_TYPE_SHORT:
+      case MYSQL_TYPE_INT24:
+      case MYSQL_TYPE_LONG:
+      case MYSQL_TYPE_YEAR:
         E->Push(row[i].GetInt32());
         break;
-      case DatabaseFieldTypes::UInt64:
-        // case DatabaseFieldTypes::Int64:
+      case MYSQL_TYPE_LONGLONG:
+      case MYSQL_TYPE_BIT:
         E->Push(row[i].GetInt64());
         break;
-      case DatabaseFieldTypes::Float:
-      case DatabaseFieldTypes::Double:
-      case DatabaseFieldTypes::Decimal:
+      case MYSQL_TYPE_FLOAT:
+      case MYSQL_TYPE_DOUBLE:
+      case MYSQL_TYPE_DECIMAL:
+      case MYSQL_TYPE_NEWDECIMAL:
         E->Push(row[i].GetDouble());
         break;
-      case DatabaseFieldTypes::Date:
-      case DatabaseFieldTypes::Time:
-      case DatabaseFieldTypes::Binary:
-        E->Push(row[i].GetCString());
-        break;
       default:
-        E->Push();
+        E->Push(row[i].GetCString());
         break;
       }
     }

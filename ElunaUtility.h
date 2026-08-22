@@ -9,6 +9,7 @@
 #define _ELUNA_UTIL_H
 
 #include "Common.h"
+#include "ElunaCompat.h"  // SKYFIRE: deteccion SFINAE de APIs del core
 
 #define EXP_CLASSIC 0
 #define EXP_TBC 1

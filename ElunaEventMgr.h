@@ -51,7 +51,7 @@ struct LuaEvent {
       state = _state;
   }
 
-  void GenerateDelay() { delay = urand(min, max); }
+  void GenerateDelay() { delay = ElunaCompat::urand(min, max); }
 
   uint32 min;          // Minimum delay between event calls
   uint32 max;          // Maximum delay between event calls

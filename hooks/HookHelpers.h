@@ -34,7 +34,7 @@
  * Eluna.BotsDisparanHooks = 1 desactiva el filtro entero.
  */
 static inline bool ElunaSkipBot(Player const* p) {
-  return p && p->GetSession() && p->GetSession()->IsBot() &&
+  return p && p->GetSession() && ElunaCompat::SessionIsBot(p->GetSession(), 0) &&
          !sElunaConfig->BotsFireHooks();
 }
 static inline bool ElunaSkipBot(Unit const* u) {

@@ -366,15 +366,23 @@ void ElunaLoader::ReloadElunaForMap(int mapId) {
   // If a mapid is provided but does not match any map or reserved id then only
   // script storage is loaded
   if (mapId != RELOAD_CACHE_ONLY) {
+#ifdef ELUNA_SKYFIRE
+    // SKYFIRE: modelo single-state. Solo existe el estado global, asi que
+    // cualquier mapId recarga ese y nada mas. Recorrer los mapas aqui
+    // (map->GetEluna() devuelve el global) recargaba el mismo estado una vez
+    // por mapa cargado; y MapManager::DoForAllMaps no existe en upstream.
+    if (Eluna *e = sWorld->GetEluna())
+      e->ReloadEluna();
+#else
     if (mapId == RELOAD_GLOBAL_STATE || mapId == RELOAD_ALL_STATES)
-#if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE || defined ELUNA_SKYFIRE
+#if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE
       if (Eluna *e = sWorld->GetEluna())
 #else
       if (Eluna *e = sWorld.GetEluna())
 #endif
         e->ReloadEluna();
 
-#if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE || defined ELUNA_SKYFIRE
+#if defined ELUNA_TRINITY || defined ELUNA_AZEROTHCORE
     sMapMgr->DoForAllMaps([&](Map *map)
 #else
     sMapMgr.DoForAllMaps([&](Map *map)
@@ -385,5 +393,6 @@ void ElunaLoader::ReloadElunaForMap(int mapId) {
                               if (Eluna *e = map->GetEluna())
                                 e->ReloadEluna();
                           });
+#endif
   }
 }

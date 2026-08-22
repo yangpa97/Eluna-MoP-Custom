@@ -43,4 +43,48 @@ extern "C"
     #define lua_pushunsigned(L, u) \
         lua_pushinteger(L, u)
 #endif
+
+// ─── PORTABILIDAD SKYFIRE (2026-08-22) ───────────────────────────────────────
+// El motor se probo contra un checkout LIMPIO de ProjectSkyfire/SkyFire_548 y
+// fallo por cuatro cosas que nuestro fork tiene y upstream no. Tres se resuelven
+// aqui detectandolas en tiempo de compilacion, sin macros que el usuario tenga
+// que poner bien:
+//
+//   WorldSession::IsBot()            viene del modulo playerbots
+//   ResultSet::GetFieldMetadata()    nombres/tipos de columna en la capa DB
+//   urand()                          upstream lo quito en 2025
+//
+// Con SFINAE el mismo fuente compila en los dos cores y hace lo correcto en cada
+// uno: sin playerbots nadie es bot, sin metadatos GetRow devuelve claves por
+// indice, y urand es nuestro.
+#include <cstdint>
+#include <random>
+#include <string>
+#include <type_traits>
+
+namespace ElunaCompat {
+
+// --- bots ---
+template <typename S>
+auto SessionIsBot(S const* s, int) -> decltype(s->IsBot()) { return s->IsBot(); }
+template <typename S>
+bool SessionIsBot(S const*, long) { return false; }
+
+// --- metadatos de columna ---
+template <typename R>
+auto FieldAlias(R const* r, uint32_t i, int) -> decltype(std::string(r->GetFieldMetadata(i).Alias)) {
+  return r->GetFieldMetadata(i).Alias;
+}
+template <typename R>
+std::string FieldAlias(R const*, uint32_t, long) { return std::string(); }
+
+// --- urand ---
+inline uint32_t urand(uint32_t min, uint32_t max) {
+  static thread_local std::mt19937 gen{std::random_device{}()};
+  if (max < min) std::swap(min, max);
+  return std::uniform_int_distribution<uint32_t>(min, max)(gen);
+}
+
+} // namespace ElunaCompat
+
 #endif

@@ -670,9 +670,9 @@ int GetAITarget(Eluna *E, Creature *creature) {
   case SELECT_TARGET_RANDOM: {
     std::list<Unit *>::const_iterator itr = targetList.begin();
     if (position)
-      std::advance(itr, urand(0, position));
+      std::advance(itr, ElunaCompat::urand(0, position));
     else
-      std::advance(itr, urand(0, targetList.size() - 1));
+      std::advance(itr, ElunaCompat::urand(0, targetList.size() - 1));
     E->Push(*itr);
   } break;
   default:
