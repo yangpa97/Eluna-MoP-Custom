@@ -1,0 +1,3241 @@
+{
+ "base_upstream": "0e0cfa60dd516fe76624b0a1a4354f3216b938b1",
+ "hooks": [
+  {
+   "file": "src/server/game/AI/CreatureAISelector.cpp",
+   "line": 16,
+   "anchor": {
+    "seq": [
+     "#include \"TemporarySummon.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine (gossip/creature AI) =====",
+    "#include \"Map.h\"",
+    "#include \"World.h\"",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/AI/CreatureAISelector.cpp",
+   "line": 37,
+   "anchor": {
+    "seq": [
+     "if (CreatureAI* scriptedAI = sScriptMgr->GetCreatureAI(creature))",
+     "return scriptedAI;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // ===== CUSTOM: Integracion Eluna Engine =====",
+    "        // Asigna ElunaCreatureAI si hay bindings de creature/gossip para este",
+    "        // NPC (single-state: el estado global es el unico que existe).",
+    "        // Nota: un NPC con bindings Eluna NO recibira su AIName de DB (SmartAI).",
+    "        if (Eluna* eluna = sWorld->GetEluna())",
+    "            if (CreatureAI* elunaAI = eluna->GetAI(creature))",
+    "                return elunaAI;"
+   ]
+  },
+  {
+   "file": "src/server/game/Achievements/AchievementMgr.cpp",
+   "line": 37,
+   "anchor": {
+    "seq": [
+     "#include \"WorldPacket.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Achievements/AchievementMgr.cpp",
+   "line": 2042,
+   "anchor": {
+    "seq": [
+     "CompletedAchievementData& ca = m_completedAchievements[achievement->ID];",
+     "ca.date = time(NULL);",
+     "ca.changed = true;"
+    ],
+    "nth": 0,
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_ACHIEVEMENT_COMPLETE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnAchievementComplete(GetOwner(), achievement->ID);"
+   ]
+  },
+  {
+   "file": "src/server/game/AuctionHouse/AuctionHouseMgr.cpp",
+   "line": 8,
+   "anchor": {
+    "seq": [
+     "#include \"AuctionHouseMgr.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/AuctionHouse/AuctionHouseMgr.cpp",
+   "line": 79,
+   "anchor": {
+    "seq": [
+     "void AuctionHouseMgr::SendAuctionWonMail(AuctionEntry* auction, SQLTransaction& trans)"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - AUCTION_EVENT_ON_SUCCESSFUL",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnSuccessful(GetAuctionsMap(auction->factionTemplateId), auction);"
+   ]
+  },
+  {
+   "file": "src/server/game/AuctionHouse/AuctionHouseMgr.cpp",
+   "line": 184,
+   "anchor": {
+    "seq": [
+     "void AuctionHouseMgr::SendAuctionExpiredMail(AuctionEntry* auction, SQLTransaction& trans)"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - AUCTION_EVENT_ON_EXPIRE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnExpire(GetAuctionsMap(auction->factionTemplateId), auction);"
+   ]
+  },
+  {
+   "file": "src/server/game/AuctionHouse/AuctionHouseMgr.cpp",
+   "line": 412,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnAuctionAdd(this, auction);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - AUCTION_EVENT_ON_ADD",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnAdd(this, auction);"
+   ]
+  },
+  {
+   "file": "src/server/game/AuctionHouse/AuctionHouseMgr.cpp",
+   "line": 422,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnAuctionRemove(this, auction);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - AUCTION_EVENT_ON_REMOVE (antes del delete: el entry aun es legible)",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnRemove(this, auction);"
+   ]
+  },
+  {
+   "file": "src/server/game/Battlegrounds/Battleground.cpp",
+   "line": 9,
+   "anchor": {
+    "seq": [
+     "#include \"Battleground.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Battlegrounds/Battleground.cpp",
+   "line": 158,
+   "anchor": {
+    "seq": [
+     "Battleground::~Battleground()"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - BG_EVENT_ON_PRE_DESTROY, con el BG aun entero",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnBGDestroy(this, GetTypeID(), GetInstanceID());"
+   ]
+  },
+  {
+   "file": "src/server/game/Battlegrounds/Battleground.cpp",
+   "line": 725,
+   "anchor": {
+    "seq": [
+     "void Battleground::EndBattleground(uint32 winner)"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - BG_EVENT_ON_END",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnBGEnd(this, GetTypeID(), GetInstanceID(), TeamId(winner));"
+   ]
+  },
+  {
+   "file": "src/server/game/Battlegrounds/Battleground.cpp",
+   "line": 1136,
+   "anchor": {
+    "seq": [
+     "void Battleground::StartBattleground()"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - BG_EVENT_ON_START",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnBGStart(this, GetTypeID(), GetInstanceID());"
+   ]
+  },
+  {
+   "file": "src/server/game/Battlegrounds/BattlegroundMgr.cpp",
+   "line": 21,
+   "anchor": {
+    "seq": [
+     "#include \"BattlegroundMgr.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Battlegrounds/BattlegroundMgr.cpp",
+   "line": 875,
+   "anchor": {
+    "seq": [
+     "bg->SetGuid(MAKE_NEW_GUID(uint32(bgTypeId), 0, HIGHGUID_BATTLEGROUND));"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - BG_EVENT_ON_CREATE. Va AQUI y no en el constructor de",
+    "    // Battleground: alli el TypeID y el InstanceID todavia no estan puestos y",
+    "    // el script recibiria BATTLEGROUND_TYPE_NONE y un id a cero. Este es el",
+    "    // primer punto donde el BG esta entero.",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnBGCreate(bg, bg->GetTypeID(), bg->GetInstanceID());"
+   ]
+  },
+  {
+   "file": "src/server/game/CMakeLists.txt",
+   "line": 276,
+   "anchor": {
+    "seq": [
+     "${OPENSSL_INCLUDE_DIR}"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "# ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "  # Lua Engine Includes",
+    "  ${CMAKE_SOURCE_DIR}/src/server/scripts/LuaEngine",
+    "  ${CMAKE_SOURCE_DIR}/src/server/scripts/LuaEngine/hooks",
+    "  ${CMAKE_SOURCE_DIR}/src/server/scripts/LuaEngine/methods",
+    "  ${CMAKE_SOURCE_DIR}/src/server/scripts/LuaEngine/deps/lualib"
+   ]
+  },
+  {
+   "file": "src/server/game/CMakeLists.txt",
+   "line": 283,
+   "anchor": {
+    "seq": [
+     "${OPENSSL_INCLUDE_DIR}",
+     ")"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "# ELUNA_EXPANSION se pasa NUMERICO (4 == EXP_MOP) a proposito: ElunaIncludes.h",
+    "# usa las comparaciones `#if ELUNA_EXPANSION > EXP_CLASSIC` ANTES de incluir",
+    "# ElunaUtility.h, donde viven las constantes EXP_*. Con la forma simbolica esas",
+    "# comparaciones se evaluarian contra 0 y elegirian la rama equivocada.",
+    "add_definitions(-DELUNA_SKYFIRE -DELUNA_EXPANSION=4)"
+   ]
+  },
+  {
+   "file": "src/server/game/Chat/Chat.cpp",
+   "line": 13,
+   "anchor": {
+    "seq": [
+     "#include \"WorldSession.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "#include \"../../scripts/LuaEngine/LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Chat/Chat.cpp",
+   "line": 409,
+   "anchor": {
+    "seq": [
+     "ASSERT(*text);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    if (sWorld->GetEluna() && m_session && !sWorld->GetEluna()->OnCommand(m_session->GetPlayer(), text))"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/GameObject/GameObject.cpp",
+   "line": 25,
+   "anchor": {
+    "seq": [
+     "#include \"World.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/GameObject/GameObject.cpp",
+   "line": 162,
+   "anchor": {
+    "seq": [
+     "WorldObject::AddToWorld();"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - GAMEOBJECT_EVENT_ON_ADD",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnAddToWorld(this);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/GameObject/GameObject.cpp",
+   "line": 176,
+   "anchor": {
+    "seq": [
+     "m_zoneScript->OnGameObjectRemove(this);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - GAMEOBJECT_EVENT_ON_REMOVE (antes de soltar duenio y modelo,",
+    "        // con el objeto aun entero para que Lua pueda leerlo)",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnRemoveFromWorld(this);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/GameObject/GameObject.cpp",
+   "line": 321,
+   "anchor": {
+    "seq": [
+     "loot.maxDuplicates = 3;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GAMEOBJECT_EVENT_ON_SPAWN",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnSpawn(this);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/GameObject/GameObject.cpp",
+   "line": 701,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGameObjectUpdate(this, diff);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GAMEOBJECT_EVENT_ON_AIUPDATE (dispara en CADA tick del objeto:",
+    "    // el binding es por entry, asi que solo cuesta en los que registres)",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->UpdateAI(this, diff);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/GameObject/GameObject.cpp",
+   "line": 1535,
+   "anchor": {
+    "seq": [
+     "if (Player* playerUser = user->ToPlayer())"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // ===== CUSTOM: Integracion Eluna Engine =====",
+    "        // GAMEOBJECT_EVENT_ON_USE: si un script Lua maneja el uso (return true),",
+    "        // se omite el comportamiento por defecto del gameobject.",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            if (e->OnGameObjectUse(playerUser, this))"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/GameObject/GameObject.cpp",
+   "line": 1548,
+   "anchor": {
+    "seq": [
+     "if (sScriptMgr->OnGossipHello(playerUser, this))",
+     "return;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - GOSSIP_EVENT_ON_HELLO de gameobject: devolver true en Lua se",
+    "        // queda con el uso y omite el menu por defecto.",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            if (e->OnGossipHello(playerUser, this))"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/GameObject/GameObject.cpp",
+   "line": 2432,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGameObjectDamaged(this, eventInvoker);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "            // Eluna - GAMEOBJECT_EVENT_ON_DAMAGED",
+    "            if (Eluna* e = sWorld->GetEluna())",
+    "                e->OnDamaged(this, eventInvoker);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/GameObject/GameObject.cpp",
+   "line": 2463,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGameObjectDestroyed(this, eventInvoker);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "            // Eluna - GAMEOBJECT_EVENT_ON_DESTROYED",
+    "            if (Eluna* e = sWorld->GetEluna())",
+    "                e->OnDestroyed(this, eventInvoker);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/GameObject/GameObject.cpp",
+   "line": 2527,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGameObjectLootStateChanged(this, uint32(state), unit);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GAMEOBJECT_EVENT_ON_LOOT_STATE_CHANGE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnLootStateChanged(this, uint32(state));"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/GameObject/GameObject.cpp",
+   "line": 2549,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGameObjectStateChanged(this, uint32(state));"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GAMEOBJECT_EVENT_ON_GO_STATE_CHANGED",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnGameObjectStateChanged(this, uint32(state));"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Item/Item.cpp",
+   "line": 19,
+   "anchor": {
+    "seq": [
+     "#include \"WorldSession.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Item/Item.cpp",
+   "line": 303,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnItemExpire(owner, GetTemplate());"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - ITEM_EVENT_ON_EXPIRE",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnExpire(owner, GetTemplate());"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Object/Object.cpp",
+   "line": 14,
+   "anchor": {
+    "seq": [
+     "#include \"DynamicTree.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "#include \"ElunaEventMgr.h\"",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Object/Object.cpp",
+   "line": 101,
+   "anchor": {
+    "seq": [
+     "ResetMap();"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "    // El procesador de timers pertenece al EventMgr de Eluna: se marca para",
+    "    // borrado diferido (se limpia en el siguiente tick del estado global).",
+    "    if (m_elunaProcessorId)",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->eventMgr->FlagObjectProcessorForDeletion(m_elunaProcessorId);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Object/Object.cpp",
+   "line": 1565,
+   "anchor": {
+    "seq": [
+     "SF_LOG_INFO(\"misc\", \"splineElevation: %f\", splineElevation);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "      // ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "      m_elunaProcessorId(0), lua_data(NULL)"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Object/Object.cpp",
+   "line": 1573,
+   "anchor": {
+    "seq": [
+     "m_serverSideVisibilityDetect.SetValue(SERVERSIDE_VISIBILITY_GHOST, GHOST_VISIBILITY_ALIVE);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "// Timers por-objeto de Eluna (obj:RegisterEvent / RemoveEventById / etc.).",
+    "// Single-state: se ignora mapId y se usa siempre el EventMgr del estado",
+    "// global; el procesador se crea perezosamente la primera vez que un script",
+    "// registra un evento sobre este objeto.",
+    "ElunaEventProcessor* WorldObject::GetElunaEvents(int32 /*mapId*/)",
+    "{",
+    "    Eluna* e = sWorld->GetEluna();"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Object/Object.cpp",
+   "line": 1584,
+   "anchor": {
+    "seq": [
+     "void WorldObject::SetWorldObject(bool on)"
+    ],
+    "position": "before"
+   },
+   "block": [
+    "    if (!m_elunaProcessorId)",
+    "        m_elunaProcessorId = e->eventMgr->CreateObjectProcessor(this);",
+    "",
+    "    return e->eventMgr->GetObjectProcessor(m_elunaProcessorId);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Object/Object.h",
+   "line": 690,
+   "anchor": {
+    "seq": [
+     "_newPosition.Relocate(x, y, z, o);",
+     "};"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "class ElunaEventProcessor;"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Object/Object.h",
+   "line": 697,
+   "anchor": {
+    "seq": [
+     "class WorldObject : public Object, public WorldLocation"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "    friend class Eluna; // Allow Eluna access"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Object/Object.h",
+   "line": 846,
+   "anchor": {
+    "seq": [
+     "Map* FindMap() const { return m_currMap; }"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna",
+    "    // ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "    // Timers por-objeto (obj:RegisterEvent). Single-state: el procesador vive en",
+    "    // el EventMgr del estado global y se crea perezosamente al primer uso.",
+    "    ElunaEventProcessor* GetElunaEvents(int32 mapId);",
+    "    uint64 m_elunaProcessorId; // id del procesador (GUID); 0 = aún no creado"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 82,
+   "anchor": {
+    "seq": [
+     "#include \"WorldStateBuilder.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 1223,
+   "anchor": {
+    "seq": [
+     "UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_DEATHS_FROM, 1, type);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - PLAYER_EVENT_ON_ENVIRONMENTAL_DEATH",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnPlayerKilledByEnvironment(this, type);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 3263,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGivePlayerXP(this, xp, victim);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_GIVE_XP (puede modificar xp por referencia)",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnGiveXP(this, xp, victim);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 3433,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerLevelChanged(this, oldLevel);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_LEVEL_CHANGE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnLevelChanged(this, oldLevel);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 4238,
+   "anchor": {
+    "seq": [
+     "void Player::learnSpell(uint32 spell_id, bool dependent)"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_LEARN_SPELL. En este core el metodo va en",
+    "    // minuscula (learnSpell), de ahi que no apareciera buscando Player::LearnSpell.",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnLearnSpell(this, spell_id);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 4857,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerTalentsReset(this, noCost);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_TALENTS_RESET",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnTalentsReset(this, noCost);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 5618,
+   "anchor": {
+    "seq": [
+     "void Player::ResurrectPlayer(float restore_percent, bool applySickness)"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_RESURRECT",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnResurrect(this);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 6009,
+   "anchor": {
+    "seq": [
+     "void Player::RepopAtGraveyard()"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_REPOP",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnRepop(this);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 6849,
+   "anchor": {
+    "seq": [
+     "void Player::SetSkill(uint16 id, uint16 step, uint16 newVal, uint16 maxVal)",
+     "if (!id)",
+     "return;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_SKILL_CHANGE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnSkillChange(this, id, newVal);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 7533,
+   "anchor": {
+    "seq": [
+     "uint32 area = areaEntry->m_ID;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "            // Eluna - PLAYER_EVENT_ON_DISCOVER_AREA",
+    "            if (Eluna* e = sWorld->GetEluna())",
+    "                e->OnDiscoverArea(this, area);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 8626,
+   "anchor": {
+    "seq": [
+     "void Player::UpdateArea(uint32 newArea)"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    uint32 oldArea = m_areaUpdateId; // Eluna: para PLAYER_EVENT_ON_UPDATE_AREA"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 8650,
+   "anchor": {
+    "seq": [
+     "RemoveByteFlag(UNIT_FIELD_SHAPESHIFT_FORM, 1, UNIT_BYTE2_FLAG_SANCTUARY);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_UPDATE_AREA",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnUpdateArea(this, oldArea, newArea);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 8700,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerUpdateZone(this, newZone, newArea);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_UPDATE_ZONE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnUpdateZone(this, newZone, newArea);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 8849,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerDuelEnd(duel->opponent, this, type);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_DUEL_END (mismo orden que ScriptMgr:",
+    "    // ganador = el oponente, perdedor = este)",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnDuelEnd(duel->opponent, this, type);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 15023,
+   "anchor": {
+    "seq": [
+     "BindToInstance(mapSave, true);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_BIND_TO_INSTANCE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnBindToInstance(this, Difficulty(mapSave->GetDifficulty()), mapSave->GetMapId(), true);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 15344,
+   "anchor": {
+    "seq": [
+     "void Player::SaveToDB(bool create /*=false*/)",
+     "m_nextSave = sWorld->getIntConfig(WorldIntConfigs::CONFIG_INTERVAL_SAVE);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_SAVE. El momento canonico para persistir estado",
+    "    // propio (puntos de la tienda, progreso de evento) sin montar un temporizador.",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnSave(this);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 16723,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerDuelStart(this, duel->opponent);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_DUEL_START",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnDuelStart(this, duel->opponent);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 19913,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerMoneyChanged(this, amount);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_MONEY_CHANGE. La variante int64 solo existe con",
+    "    // ELUNA_EXPANSION >= EXP_CATA, que es lo que encendio B5; en modo Classic el",
+    "    // dinero se quedaba en int32 y este hook ni se compilaba.",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnMoneyChanged(this, amount);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 22387,
+   "anchor": {
+    "seq": [
+     "SendNewItem(newitem, uint32(item->count), false, false, true);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - PLAYER_EVENT_ON_LOOT_ITEM",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnLootItem(this, newitem, item->count, GetLootGUID());"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 22743,
+   "anchor": {
+    "seq": [
+     "return false;",
+     "learnSpell(spellid, false);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_LEARN_TALENTS. La firma pide un rango de talento",
+    "    // y MoP no los tiene: se manda 0 a proposito, en vez de inventarse un valor.",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnLearnTalents(this, uint32(talentId), 0, spellid);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "line": 23532,
+   "anchor": {
+    "seq": [
+     "SetActiveSpec(spec);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        if (GetTalentSpecialization() != specAntes)",
+    "            e->OnSpecChanged(this, GetTalentSpecialization(), specAntes);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/PlayerQuestState.cpp",
+   "line": 6,
+   "anchor": {
+    "seq": [
+     "#include \"Player.h\""
+    ],
+    "position": "before"
+   },
+   "block": [
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/PlayerQuestState.cpp",
+   "line": 515,
+   "anchor": {
+    "seq": [
+     "void Player::AddQuest(Quest const* quest, Object* questGiver)"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnQuestAccept(this, (Item*)questGiver, quest);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/PlayerQuestState.cpp",
+   "line": 610,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnQuestAccept(this, questGiver->ToGameObject(), quest);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "                // Eluna - GAMEOBJECT_EVENT_ON_QUEST_ACCEPT",
+    "                if (Eluna* e = sWorld->GetEluna())",
+    "                    e->OnQuestAccept(this, questGiver->ToGameObject(), quest);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/PlayerQuestState.cpp",
+   "line": 1573,
+   "anchor": {
+    "seq": [
+     "m_QuestStatusSave[quest_id] = true;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - PLAYER_EVENT_ON_QUEST_STATUS_CHANGED",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnQuestStatusChanged(this, quest_id, static_cast<uint8>(status));"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/PlayerStorage.cpp",
+   "line": 6,
+   "anchor": {
+    "seq": [
+     "#include \"Player.h\""
+    ],
+    "position": "before"
+   },
+   "block": [
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/PlayerStorage.cpp",
+   "line": 1772,
+   "anchor": {
+    "seq": [
+     "if (proto)"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - PLAYER_EVENT_ON_CAN_USE_ITEM. Devuelve EQUIP_ERR_OK sin bindings",
+    "        // (comprobado), asi que no bloquea nada por defecto.",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            if (InventoryResult res = e->OnCanUseItem(this, proto->ItemId))"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/PlayerStorage.cpp",
+   "line": 1961,
+   "anchor": {
+    "seq": [
+     "return pItem;",
+     "Item* Player::StoreItem(ItemPosCountVec const& dest, Item* pItem, bool update)"
+    ],
+    "position": "before"
+   },
+   "block": [
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnAdd(this, pItem);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/PlayerStorage.cpp",
+   "line": 2242,
+   "anchor": {
+    "seq": [
+     "ApplyEquipCooldown(pItem2);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - ITEM_EVENT_ON_EQUIP (se apilo sobre el item ya equipado)",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnItemEquip(this, pItem2, slot);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/PlayerStorage.cpp",
+   "line": 2253,
+   "anchor": {
+    "seq": [
+     "return pItem2;",
+     "UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_EQUIP_ITEM, pItem->GetEntry());",
+     "UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_EQUIP_EPIC_ITEM, pItem->GetEntry(), slot);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - ITEM_EVENT_ON_EQUIP (por entry) y PLAYER_EVENT_ON_EQUIP (global).",
+    "    // Son dos eventos distintos y aqui disparan los dos.",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "    {",
+    "        e->OnItemEquip(this, pItem, slot);",
+    "        e->OnEquip(this, pItem, bag, slot);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/PlayerStorage.cpp",
+   "line": 2358,
+   "anchor": {
+    "seq": [
+     "if (pProto && pProto->ItemSet)",
+     "RemoveItemsSetItem(this, pProto);",
+     "_ApplyItemMods(pItem, slot, false);"
+    ],
+    "nth": 0,
+    "position": "after"
+   },
+   "block": [
+    "                // Eluna - ITEM_EVENT_ON_UNEQUIP. Aqui, y no en _ApplyItemMods, porque",
+    "                // esa se llama tambien al morir/resucitar y dispararia de mas.",
+    "                if (Eluna* e = sWorld->GetEluna())",
+    "                    e->OnItemUnEquip(this, pItem, slot);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/PlayerStorage.cpp",
+   "line": 2501,
+   "anchor": {
+    "seq": [
+     "ItemRemovedQuestCheck(pItem->GetEntry(), pItem->GetCount());"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - ITEM_EVENT_ON_REMOVE. Aqui el item todavia esta entero y se",
+    "        // puede leer desde Lua. Es aviso, no veto: el retorno se ignora porque",
+    "        // abortar una destruccion a medias dejaria el inventario inconsistente.",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnRemove(this, pItem);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Unit/Unit.cpp",
+   "line": 54,
+   "anchor": {
+    "seq": [
+     "#include \"World.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Unit/Unit.cpp",
+   "line": 2849,
+   "anchor": {
+    "seq": [
+     "int32 Unit::DealHeal(Unit* victim, uint32 addhealth)",
+     "int32 gain = 0;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - UNIT_EVENT_ON_HEAL. Va AQUI, sobre addhealth y ANTES de",
+    "    // ModifyHealth, y no junto al OnHeal de ScriptMgr de mas abajo: ese recibe",
+    "    // `gain`, que es la vida que YA subio -- a tope de vida vale 0, y devolver",
+    "    // otro numero no cambia nada porque la curacion ya se aplico. Probado",
+    "    // in-game el 2026-08-22: \"[cura] 0 -> 0\". Para que Lua pueda modificar la",
+    "    // curacion tiene que ver la cantidad pedida, no la concedida.",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnUnitHeal(this, victim, addhealth);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Unit/Unit.cpp",
+   "line": 6977,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerKilledByCreature(killerCre, killed);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // ===== CUSTOM: Eluna - mismos hooks de muerte que ScriptMgr =====",
+    "    if (Eluna* e = sWorld->GetEluna())"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Unit/Unit.cpp",
+   "line": 7547,
+   "anchor": {
+    "seq": [
+     "return true;",
+     "void Unit::RemoveVehicleKit(bool remove /*= false*/)"
+    ],
+    "position": "before"
+   },
+   "block": [
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnInstall(m_vehicleKit);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Unit/UnitCombat.cpp",
+   "line": 44,
+   "anchor": {
+    "seq": [
+     "#include \"Unit.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Unit/UnitCombat.cpp",
+   "line": 78,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnDamage(this, victim, damage);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - UNIT_EVENT_ON_DAMAGE (damage por referencia: Lua puede cambiarlo)",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnUnitDamage(this, victim, damage);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Unit/UnitCombatState.cpp",
+   "line": 6,
+   "anchor": {
+    "seq": [
+     "#include \"Battlefield.h\""
+    ],
+    "position": "before"
+   },
+   "block": [
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Unit/UnitCombatState.cpp",
+   "line": 341,
+   "anchor": {
+    "seq": [
+     "SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnPlayerEnterCombat(p, enemy);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Unit/UnitCombatState.cpp",
+   "line": 396,
+   "anchor": {
+    "seq": [
+     "if (IsInCombat())"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "            if (Eluna* e = sWorld->GetEluna())",
+    "                e->OnPlayerLeaveCombat(p);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Vehicle/Vehicle.cpp",
+   "line": 22,
+   "anchor": {
+    "seq": [
+     "#include \"Vehicle.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Vehicle/Vehicle.cpp",
+   "line": 112,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnInstall(this);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - FUERA del guard de criatura a proposito. Las monturas-vehiculo de",
+    "    // este servidor hacen VEHICULO AL JUGADOR (el Brutosaurio 700003 tiene",
+    "    // VehicleId=0 y los NPC embarcan al jinete), asi que heredar la restriccion",
+    "    // de ScriptMgr dejaba estos hooks muertos justo en el contenido que los usa.",
+    "    // VEHICLE_EVENT_ON_INSTALL",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnInstall(this);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Vehicle/Vehicle.cpp",
+   "line": 162,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnUninstall(this);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - VEHICLE_EVENT_ON_UNINSTALL (fuera del guard, ver OnInstall)",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnUninstall(this);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Vehicle/Vehicle.cpp",
+   "line": 545,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnRemovePassenger(this, unit);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - VEHICLE_EVENT_ON_REMOVE_PASSENGER (fuera del guard, ver OnInstall)",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnRemovePassenger(this, unit);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Vehicle/Vehicle.cpp",
+   "line": 877,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnInstallAccessory(Target, Passenger->ToCreature());"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - fuera del \"if (Creature*)\" de arriba a proposito: el embarque real",
+    "    // ocurre aqui (Vehicle::AddPassenger solo encola este evento), pero cuando el",
+    "    // vehiculo es un JUGADOR ese guard es falso y los hooks no disparaban nunca.",
+    "    if (Eluna* e = sWorld->GetEluna())"
+   ]
+  },
+  {
+   "file": "src/server/game/Events/GameEventMgr.cpp",
+   "line": 8,
+   "anchor": {
+    "seq": [
+     "#include \"GameEventMgr.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Events/GameEventMgr.cpp",
+   "line": 204,
+   "anchor": {
+    "seq": [
+     "bool GameEventMgr::StartEvent(uint16 event_id, bool overwrite)"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GAME_EVENT_START",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnGameEventStart(uint32(event_id));"
+   ]
+  },
+  {
+   "file": "src/server/game/Events/GameEventMgr.cpp",
+   "line": 248,
+   "anchor": {
+    "seq": [
+     "void GameEventMgr::StopEvent(uint16 event_id, bool overwrite)"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GAME_EVENT_STOP",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnGameEventStop(uint32(event_id));"
+   ]
+  },
+  {
+   "file": "src/server/game/Groups/Group.cpp",
+   "line": 25,
+   "anchor": {
+    "seq": [
+     "#include \"WorldSession.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Groups/Group.cpp",
+   "line": 165,
+   "anchor": {
+    "seq": [
+     "else if (!AddMember(leader))",
+     "return false;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GROUP_EVENT_ON_CREATE (sin equivalente en ScriptMgr, va al final",
+    "    // del constructor logico, con el lider ya dentro).",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnCreate(this, m_leaderGuid, m_groupType);"
+   ]
+  },
+  {
+   "file": "src/server/game/Groups/Group.cpp",
+   "line": 349,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGroupInviteMember(this, player->GetGUID());"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GROUP_EVENT_ON_MEMBER_INVITE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnInviteMember(this, player->GetGUID());"
+   ]
+  },
+  {
+   "file": "src/server/game/Groups/Group.cpp",
+   "line": 473,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGroupAddMember(this, player->GetGUID());"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GROUP_EVENT_ON_MEMBER_ADD",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnAddMember(this, player->GetGUID());"
+   ]
+  },
+  {
+   "file": "src/server/game/Groups/Group.cpp",
+   "line": 562,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGroupRemoveMember(this, guid, method, kicker, reason);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GROUP_EVENT_ON_MEMBER_REMOVE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnRemoveMember(this, guid, (uint8)method);"
+   ]
+  },
+  {
+   "file": "src/server/game/Groups/Group.cpp",
+   "line": 706,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGroupChangeLeader(this, newLeaderGuid, m_leaderGuid);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GROUP_EVENT_ON_LEADER_CHANGE (m_leaderGuid sigue siendo el",
+    "    // lider VIEJO en este punto; se reasigna mas abajo).",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnChangeLeader(this, newLeaderGuid, m_leaderGuid);"
+   ]
+  },
+  {
+   "file": "src/server/game/Groups/Group.cpp",
+   "line": 781,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGroupDisband(this);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GROUP_EVENT_ON_DISBAND (antes de vaciar m_memberSlots, para que",
+    "    // el script pueda todavia recorrer a los miembros).",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnDisband(this);"
+   ]
+  },
+  {
+   "file": "src/server/game/Guilds/Guild.cpp",
+   "line": 12,
+   "anchor": {
+    "seq": [
+     "#include \"Guild.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Guilds/Guild.cpp",
+   "line": 853,
+   "anchor": {
+    "seq": [
+     "IsBank(), GetContainer(), GetSlotId());"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GUILD_EVENT_ON_ITEM_MOVE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnItemMove(m_pGuild, m_pPlayer, pFrom->GetItem(),"
+   ]
+  },
+  {
+   "file": "src/server/game/Guilds/Guild.cpp",
+   "line": 1241,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGuildCreate(this, pLeader, name);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - GUILD_EVENT_ON_CREATE",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnCreate(this, pLeader, name);"
+   ]
+  },
+  {
+   "file": "src/server/game/Guilds/Guild.cpp",
+   "line": 1254,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGuildDisband(this);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GUILD_EVENT_ON_DISBAND",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnDisband(this);"
+   ]
+  },
+  {
+   "file": "src/server/game/Guilds/Guild.cpp",
+   "line": 1594,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGuildMOTDChanged(this, motd);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - GUILD_EVENT_ON_MOTD_CHANGE",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnMOTDChanged(this, motd);"
+   ]
+  },
+  {
+   "file": "src/server/game/Guilds/Guild.cpp",
+   "line": 1618,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGuildInfoChanged(this, info);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - GUILD_EVENT_ON_INFO_CHANGE",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnInfoChanged(this, info);"
+   ]
+  },
+  {
+   "file": "src/server/game/Guilds/Guild.cpp",
+   "line": 2230,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGuildMemberDepositMoney(this, player, amount);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GUILD_EVENT_ON_MONEY_DEPOSIT (variante uint64: solo existe con",
+    "    // ELUNA_EXPANSION >= EXP_CATA, o sea gracias a B5)",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnMemberDepositMoney(this, player, amount);"
+   ]
+  },
+  {
+   "file": "src/server/game/Guilds/Guild.cpp",
+   "line": 2277,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGuildMemberWitdrawMoney(this, player, amount, repair);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GUILD_EVENT_ON_MONEY_WITHDRAW (variante uint64, ver deposito)",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnMemberWitdrawMoney(this, player, amount, repair);"
+   ]
+  },
+  {
+   "file": "src/server/game/Guilds/Guild.cpp",
+   "line": 2931,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGuildAddMember(this, player, rankId);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GUILD_EVENT_ON_ADD_MEMBER",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnAddMember(this, player, uint32(rankId));"
+   ]
+  },
+  {
+   "file": "src/server/game/Guilds/Guild.cpp",
+   "line": 2980,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGuildRemoveMember(this, player, isDisbanding, isKicked);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GUILD_EVENT_ON_REMOVE_MEMBER (su firma no distingue expulsion:",
+    "    // solo lleva isDisbanding)",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnRemoveMember(this, player, isDisbanding);"
+   ]
+  },
+  {
+   "file": "src/server/game/Guilds/Guild.cpp",
+   "line": 3315,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGuildEvent(this, uint8(eventType), playerGuid1, playerGuid2, newRank);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GUILD_EVENT_ON_EVENT",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnEvent(this, uint8(eventType), playerGuid1, playerGuid2, newRank);"
+   ]
+  },
+  {
+   "file": "src/server/game/Guilds/Guild.cpp",
+   "line": 3340,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnGuildBankEvent(this, uint8(eventType), tabId, lowguid, itemOrMoney, itemStackCount, destTabId);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - GUILD_EVENT_ON_BANK_EVENT",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnBankEvent(this, uint8(eventType), tabId, lowguid, itemOrMoney, itemStackCount, destTabId);"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/CharacterHandler.cpp",
+   "line": 6,
+   "anchor": {
+    "seq": [
+     "#include \"AccountMgr.h\""
+    ],
+    "position": "before"
+   },
+   "block": [
+    "#include \"Config.h\"",
+    "#include \"../../scripts/LuaEngine/LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/CharacterHandler.cpp",
+   "line": 1349,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerCreate(&newChar);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "            // Eluna - PLAYER_EVENT_ON_CHARACTER_CREATE",
+    "            if (Eluna* e = sWorld->GetEluna())",
+    "                e->OnCreate(&newChar);"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/CharacterHandler.cpp",
+   "line": 1409,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerDelete(guid);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_CHARACTER_DELETE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnDelete(GUID_LOPART(guid));"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/CharacterHandler.cpp",
+   "line": 1841,
+   "anchor": {
+    "seq": [
+     "if (pCurrChar->getClass() == CLASS_MONK)"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "    // Single-state: los hooks de login disparan en el estado global",
+    "    if (Eluna* e = sWorld->GetEluna())"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/ChatHandler.cpp",
+   "line": 6,
+   "anchor": {
+    "seq": [
+     "#include \"AccountMgr.h\""
+    ],
+    "position": "before"
+   },
+   "block": [
+    "// ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "#include \"../../scripts/LuaEngine/LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/ChatHandler.cpp",
+   "line": 307,
+   "anchor": {
+    "seq": [
+     "case ChatMsg::CHAT_MSG_SAY:",
+     "case ChatMsg::CHAT_MSG_EMOTE:",
+     "case ChatMsg::CHAT_MSG_YELL:"
+    ],
+    "nth": 1,
+    "position": "after"
+   },
+   "block": [
+    "            // ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "            // Eluna",
+    "            if (sWorld->GetEluna() && !sWorld->GetEluna()->OnChat(sender, (uint32)type, (uint32)lang, msg))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/ChatHandler.cpp",
+   "line": 395,
+   "anchor": {
+    "seq": [
+     "sender->AddWhisperWhiteList(receiver->GetGUID());"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "            // Eluna - PLAYER_EVENT_ON_WHISPER (veto)",
+    "            if (Eluna* e = sWorld->GetEluna())",
+    "                if (!e->OnChat(GetPlayer(), (uint32)type, (uint32)lang, msg, receiver))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/ChatHandler.cpp",
+   "line": 420,
+   "anchor": {
+    "seq": [
+     "type = ChatMsg::CHAT_MSG_PARTY_LEADER;",
+     "sScriptMgr->OnPlayerChat(GetPlayer(), type, lang, msg, group);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "            // Eluna - PLAYER_EVENT_ON_GROUP_CHAT (veto; cubre party/raid/instance)",
+    "            if (Eluna* e = sWorld->GetEluna())",
+    "                if (!e->OnChat(GetPlayer(), (uint32)type, (uint32)lang, msg, group))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/ChatHandler.cpp",
+   "line": 438,
+   "anchor": {
+    "seq": [
+     "if (GetPlayer()->GetGuildId())",
+     "if (Guild* guild = sGuildMgr->GetGuildById(GetPlayer()->GetGuildId()))",
+     "sScriptMgr->OnPlayerChat(GetPlayer(), type, lang, msg, guild);"
+    ],
+    "nth": 0,
+    "position": "after"
+   },
+   "block": [
+    "                    // Eluna - PLAYER_EVENT_ON_GUILD_CHAT (veto; cubre guild/officer)",
+    "                    if (Eluna* e = sWorld->GetEluna())",
+    "                        if (!e->OnChat(GetPlayer(), (uint32)type, (uint32)lang, msg, guild))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/ChatHandler.cpp",
+   "line": 458,
+   "anchor": {
+    "seq": [
+     "if (GetPlayer()->GetGuildId())",
+     "if (Guild* guild = sGuildMgr->GetGuildById(GetPlayer()->GetGuildId()))",
+     "sScriptMgr->OnPlayerChat(GetPlayer(), type, lang, msg, guild);"
+    ],
+    "nth": 1,
+    "position": "after"
+   },
+   "block": [
+    "                    // Eluna - PLAYER_EVENT_ON_GUILD_CHAT (veto; cubre guild/officer)",
+    "                    if (Eluna* e = sWorld->GetEluna())",
+    "                        if (!e->OnChat(GetPlayer(), (uint32)type, (uint32)lang, msg, guild))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/ChatHandler.cpp",
+   "line": 488,
+   "anchor": {
+    "seq": [
+     "type = ChatMsg::CHAT_MSG_RAID_LEADER;",
+     "sScriptMgr->OnPlayerChat(GetPlayer(), type, lang, msg, group);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "            // Eluna - PLAYER_EVENT_ON_GROUP_CHAT (veto; cubre party/raid/instance)",
+    "            if (Eluna* e = sWorld->GetEluna())",
+    "                if (!e->OnChat(GetPlayer(), (uint32)type, (uint32)lang, msg, group))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/ChatHandler.cpp",
+   "line": 508,
+   "anchor": {
+    "seq": [
+     "return;",
+     "sScriptMgr->OnPlayerChat(GetPlayer(), type, lang, msg, group);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "            // Eluna - PLAYER_EVENT_ON_GROUP_CHAT (veto; cubre party/raid/instance)",
+    "            if (Eluna* e = sWorld->GetEluna())",
+    "                if (!e->OnChat(GetPlayer(), (uint32)type, (uint32)lang, msg, group))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/ChatHandler.cpp",
+   "line": 534,
+   "anchor": {
+    "seq": [
+     "type = ChatMsg::CHAT_MSG_INSTANCE_LEADER;",
+     "sScriptMgr->OnPlayerChat(GetPlayer(), type, lang, msg, group);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "            // Eluna - PLAYER_EVENT_ON_GROUP_CHAT (veto; cubre party/raid/instance)",
+    "            if (Eluna* e = sWorld->GetEluna())",
+    "                if (!e->OnChat(GetPlayer(), (uint32)type, (uint32)lang, msg, group))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/ChatHandler.cpp",
+   "line": 562,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerChat(_player, type, lang, msg, chn);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "                    // Eluna - PLAYER_EVENT_ON_CHANNEL_CHAT (veto)",
+    "                    if (Eluna* e = sWorld->GetEluna())",
+    "                        if (!e->OnChat(_player, (uint32)type, (uint32)lang, msg, chn))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/ChatHandler.cpp",
+   "line": 699,
+   "anchor": {
+    "seq": [
+     "if (prefix.empty() || prefix.length() > 16)",
+     "return;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - ADDON_EVENT_ON_MESSAGE: devolver false en Lua consume el mensaje y",
+    "    // no llega a su destino. El hook espera prefijo y contenido en una sola",
+    "    // cadena separados por tabulador, que es como los parte por dentro; aqui",
+    "    // llegan sueltos, asi que se recomponen. Los destinos (receptor, hermandad,",
+    "    // grupo, canal) van a NULL a proposito: el hook los comprueba uno a uno y",
+    "    // resolverlos aqui seria duplicar el reparto que hace el propio handler.",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "    {",
+    "        std::string paquete = prefix + \"\t\" + message;",
+    "        if (!e->OnAddonMessage(sender, uint32(type), paquete, NULL, NULL, NULL, NULL))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/ChatHandler.cpp",
+   "line": 789,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerEmote(GetPlayer(), emote);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_EMOTE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnEmote(GetPlayer(), emote);"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/ChatHandler.cpp",
+   "line": 882,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerTextEmote(GetPlayer(), text_emote, emoteNum, guid);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_TEXT_EMOTE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnTextEmote(GetPlayer(), text_emote, emoteNum, guid);"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/GroupHandler.cpp",
+   "line": 23,
+   "anchor": {
+    "seq": [
+     "#include \"WorldSession.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/GroupHandler.cpp",
+   "line": 313,
+   "anchor": {
+    "seq": [
+     "sGroupMgr->AddGroup(group);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - GROUP_EVENT_ON_MEMBER_ACCEPT: devolver false en Lua impide",
+    "        // que el jugador entre al grupo (la invitacion ya se retiro arriba).",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            if (!e->OnMemberAccept(group, GetPlayer()))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/LootHandler.cpp",
+   "line": 23,
+   "anchor": {
+    "seq": [
+     "#include \"WorldSession.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/LootHandler.cpp",
+   "line": 211,
+   "anchor": {
+    "seq": [
+     "if (!loot)",
+     "continue;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - PLAYER_EVENT_ON_LOOT_MONEY (oro total de esta fuente)",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnLootMoney(player, loot->gold);"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/MailHandler.cpp",
+   "line": 20,
+   "anchor": {
+    "seq": [
+     "#include \"WorldSession.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/MailHandler.cpp",
+   "line": 537,
+   "anchor": {
+    "seq": [
+     "player->SendMailResult(0, MAIL_SEND, MAIL_ERR_RECIPIENT_NOT_FOUND);",
+     "return;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_SEND_MAIL: devolver false en Lua impide el envio.",
+    "    // Sin bindings devuelve true (comprobado).",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        if (!e->OnSendMail(player, receiverGuid))",
+    "        {"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/MiscHandler.cpp",
+   "line": 6,
+   "anchor": {
+    "seq": [
+     "#include \"AccountMgr.h\"",
+     "#include \"AccountMgr.h\""
+    ],
+    "position": "before"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/MiscHandler.cpp",
+   "line": 1810,
+   "anchor": {
+    "seq": [
+     "ChatHandler(player->GetSession()).PSendSysMessage(LANG_DEBUG_AREATRIGGER_REACHED, request.triggerId);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - TRIGGER_EVENT_ON_TRIGGER (return true en Lua omite el trigger)",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        if (e->OnAreaTrigger(player, atEntry))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/MovementHandler.cpp",
+   "line": 26,
+   "anchor": {
+    "seq": [
+     "#include \"WorldSession.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/MovementHandler.cpp",
+   "line": 382,
+   "anchor": {
+    "seq": [
+     "GetPlayer()->SendInitialPacketsAfterAddToMap();"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // ===== CUSTOM: Integracion Eluna Engine =====",
+    "    // PLAYER_EVENT_ON_MAP_CHANGE: el jugador ya esta anadido al nuevo mapa",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnMapChanged(GetPlayer());"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/NPCHandler.cpp",
+   "line": 13,
+   "anchor": {
+    "seq": [
+     "#include \"DatabaseEnv.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "#include \"ElunaCreatureAI.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/NPCHandler.cpp",
+   "line": 372,
+   "anchor": {
+    "seq": [
+     "sBattlegroundMgr->SendAreaSpiritHealerQueryOpcode(_player, bg, unit->GetGUID());",
+     "return;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "        // Check if Eluna already sent a gossip menu by checking if",
+    "        // the AI is an ElunaCreatureAI (meaning Eluna has bindings for this NPC).",
+    "        // If so, Eluna handled it - skip the default gossip.",
+    "        if (dynamic_cast<ElunaCreatureAI*>(unit->AI()))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/QuestHandler.cpp",
+   "line": 23,
+   "anchor": {
+    "seq": [
+     "#include \"WorldSession.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/QuestHandler.cpp",
+   "line": 120,
+   "anchor": {
+    "seq": [
+     "GameObject* go_questgiver = (GameObject*)questgiver;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "            // Eluna - GAMEOBJECT_EVENT_ON_DIALOG_STATUS",
+    "            if (Eluna* e = sWorld->GetEluna())",
+    "                e->GetDialogStatus(_player, go_questgiver);"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/QuestHandler.cpp",
+   "line": 503,
+   "anchor": {
+    "seq": [
+     "GameObject* questGiver = object->ToGameObject();"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "                // Eluna - GAMEOBJECT_EVENT_ON_QUEST_REWARD",
+    "                if (Eluna* e = sWorld->GetEluna())",
+    "                    e->OnQuestReward(_player, questGiver, quest, reward);"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/QuestHandler.cpp",
+   "line": 654,
+   "anchor": {
+    "seq": [
+     "_player->RemoveTimedAchievement(ACHIEVEMENT_TIMED_TYPE_QUEST, questId);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "            // Eluna - PLAYER_EVENT_ON_QUEST_ABANDON",
+    "            if (Eluna* e = sWorld->GetEluna())",
+    "                e->OnQuestAbandon(_player, questId);"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/SpellHandler.cpp",
+   "line": 24,
+   "anchor": {
+    "seq": [
+     "#include \"WorldSession.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "#include \"../../scripts/LuaEngine/LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/SpellHandler.cpp",
+   "line": 1347,
+   "anchor": {
+    "seq": [
+     "if (!sScriptMgr->OnItemUse(pUser, pItem, targets))"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - ITEM_EVENT_ON_USE (y de paso el menu gossip de item, que",
+    "        // Eluna::OnUse dispara por dentro). Devolver false en Lua omite el",
+    "        // lanzamiento por defecto; Eluna ya se encarga de sacar al cliente del",
+    "        // estado gris del item.",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            if (!e->OnUse(pUser, pItem, targets))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/SpellHandler.cpp",
+   "line": 1503,
+   "anchor": {
+    "seq": [
+     "if (!go->IsWithinDistInMap(_player, INTERACTION_DISTANCE))",
+     "return;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // ===== CUSTOM: Integracion Eluna Engine =====",
+    "    // El CLIC directo del jugador llega por ESTE handler (CMSG_GAME_OBJ_USE) y",
+    "    // NUNCA pasa por GameObject::Use(), asi que el hook de alli no basta:",
+    "    // GAMEOBJECT_EVENT_ON_USE (14) jamas disparaba con palancas/botones clicados.",
+    "    // Si un script Lua consume el uso (return true), se omite el flujo por defecto.",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        if (e->OnGameObjectUse(_player, go))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/TradeHandler.cpp",
+   "line": 19,
+   "anchor": {
+    "seq": [
+     "#include \"WorldSession.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/TradeHandler.cpp",
+   "line": 344,
+   "anchor": {
+    "seq": [
+     "if (!my_trade)",
+     "return;",
+     "Player* trader = my_trade->GetTrader();"
+    ],
+    "nth": 0,
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_TRADE_ACCEPT: devolver false en Lua aborta el",
+    "    // intercambio. Sin bindings devuelve true (comprobado antes de cablearlo).",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        if (!e->OnTradeAccept(_player, trader))"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/TradeHandler.cpp",
+   "line": 698,
+   "anchor": {
+    "seq": [
+     "SendTradeStatus(TRADE_STATUS_ALREADY_TRADING);",
+     "return;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_TRADE_INIT: devolver false en Lua impide abrir el",
+    "    // intercambio. Sin bindings devuelve true (comprobado).",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        if (!e->OnTradeInit(GetPlayer(), pOther))",
+    "        {"
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.cpp",
+   "line": 7,
+   "anchor": {
+    "seq": [
+     "#include \"Map.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "#include \"../../scripts/LuaEngine/ElunaMgr.h\"",
+    "#include \"../../scripts/LuaEngine/LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.cpp",
+   "line": 47,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnDestroyMap(this);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - MAP_EVENT_ON_DESTROY",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnDestroy(this);"
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.cpp",
+   "line": 217,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnLoadGridMap(this, GridMaps[gx][gy], gx, gy);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - MAP_EVENT_ON_GRID_LOAD",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnGridLoad(this, gx, gy);"
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.cpp",
+   "line": 254,
+   "anchor": {
+    "seq": [
+     "delete si_GridStates[GRID_STATE_REMOVAL];"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "      _eluna(NULL), i_scriptLock(false)"
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.cpp",
+   "line": 277,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnCreateMap(this);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - MAP_EVENT_ON_CREATE (estaba implementado en el motor y sin",
+    "    // call-site: el inventario lo daba por cableado porque OnCreate coincide en",
+    "    // nombre con el de grupo y el de hermandad)",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnCreate(this);"
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.cpp",
+   "line": 284,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnCreateMap(this);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "// Con el modelo single-state (auditoría 2026-06-10) no hay estado por mapa, asi",
+    "// que se cae al global. Se conserva la comprobacion de _eluna por si algun dia",
+    "// se reviven los estados por mapa.",
+    "Eluna* Map::GetEluna() const { return _eluna ? _eluna : sWorld->GetEluna(); }"
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.cpp",
+   "line": 540,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerEnterMap(this, player);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - MAP_EVENT_ON_PLAYER_ENTER",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnPlayerEnter(this, player);"
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.cpp",
+   "line": 691,
+   "anchor": {
+    "seq": [
+     "void Map::Update(const uint32 t_diff)"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - MAP_EVENT_ON_UPDATE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnMapUpdate(this, t_diff);"
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.cpp",
+   "line": 879,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerLeaveMap(this, player);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - MAP_EVENT_ON_PLAYER_LEAVE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnPlayerLeave(this, player);"
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.cpp",
+   "line": 1493,
+   "anchor": {
+    "seq": [
+     "if (i_InstanceId == 0)",
+     "if (GridMaps[gx][gy])"
+    ],
+    "position": "before"
+   },
+   "block": [
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnGridUnload(this, gx, gy);"
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.cpp",
+   "line": 2843,
+   "anchor": {
+    "seq": [
+     "InstanceMap::~InstanceMap()"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - suelta la tabla Lua de esta instancia y limpia sus bindings, o",
+    "    // cada instancia efimera dejaria una referencia colgada en el registry.",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->FreeInstanceId(GetInstanceId());"
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.cpp",
+   "line": 3135,
+   "anchor": {
+    "seq": [
+     "if (!i_data)"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            i_data = e->GetInstanceData(this);"
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.h",
+   "line": 42,
+   "anchor": {
+    "seq": [
+     "class Transport;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "class Eluna;"
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.h",
+   "line": 258,
+   "anchor": {
+    "seq": [
+     "virtual ~Map();"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "    // OJO: en modelo single-state _eluna es SIEMPRE NULL, asi que devolverlo tal",
+    "    // cual convertia esto en una trampa mortal — ElunaInstanceAI hace",
+    "    // instance->GetEluna()->OnX(...) sin comprobar nada y habria reventado en el",
+    "    // primer tick de cualquier instancia con bindings. Definido en Map.cpp",
+    "    // porque Map.h no puede incluir World.h.",
+    "    Eluna* GetEluna() const;"
+   ]
+  },
+  {
+   "file": "src/server/game/Maps/Map.h",
+   "line": 633,
+   "anchor": {
+    "seq": [
+     "Map* m_parentMap;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "    Eluna* _eluna;"
+   ]
+  },
+  {
+   "file": "src/server/game/Reputation/ReputationMgr.cpp",
+   "line": 12,
+   "anchor": {
+    "seq": [
+     "#include \"ReputationMgr.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Reputation/ReputationMgr.cpp",
+   "line": 294,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerReputationChange(_player, factionEntry->ID, standing, incremental);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_REPUTATION_CHANGE (standing por referencia: Lua",
+    "    // puede cambiar cuanta reputacion se otorga antes de aplicarla)",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnReputationChange(_player, factionEntry->ID, standing, incremental);"
+   ]
+  },
+  {
+   "file": "src/server/game/Server/WorldSession.cpp",
+   "line": 11,
+   "anchor": {
+    "seq": [
+     "#include \"WorldSession.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "#include \"../../scripts/LuaEngine/LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Server/WorldSession.cpp",
+   "line": 261,
+   "anchor": {
+    "seq": [
+     "sendLastPacketBytes = packet->wpos(); // wpos is real written size"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - SERVER_EVENT_ON_PACKET_SEND (7) y PACKET_EVENT_ON_PACKET_SEND (7,",
+    "    // por opcode). Devolver false en Lua suprime el envio. El guard",
+    "    // HasPacketHooks() es imprescindible: esto es el camino mas caliente del",
+    "    // servidor y sin el pagariamos un dynamic_cast por paquete aunque nadie use",
+    "    // la familia.",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        if (e->HasPacketHooks() && !e->OnPacketSend(this, *packet))"
+   ]
+  },
+  {
+   "file": "src/server/game/Server/WorldSession.cpp",
+   "line": 341,
+   "anchor": {
+    "seq": [
+     "KickPlayer();"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - SERVER_EVENT_ON_PACKET_RECEIVE (5) y PACKET_EVENT_ON_PACKET_RECEIVE",
+    "        // (5, por opcode). El script puede reescribir el paquete, y devolver false",
+    "        // lo suprime: en ese caso NO se despacha, pero hay que liberarlo igual que",
+    "        // hace la cola del bucle mas abajo. deletePacket siempre vale true en este",
+    "        // punto (solo el switch lo pone a false, y aun no hemos entrado).",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            if (e->HasPacketHooks() && !e->OnPacketReceive(this, *packet))"
+   ]
+  },
+  {
+   "file": "src/server/game/Server/WorldSession.cpp",
+   "line": 645,
+   "anchor": {
+    "seq": [
+     "sSocialMgr->RemovePlayerSocial(_player->GetGUIDLow());"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna",
+    "        if (sWorld->GetEluna())",
+    "            sWorld->GetEluna()->OnLogout(_player);"
+   ]
+  },
+  {
+   "file": "src/server/game/Spells/Spell.cpp",
+   "line": 53,
+   "anchor": {
+    "seq": [
+     "#include \"WorldSession.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Spells/Spell.cpp",
+   "line": 3498,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerSpellCast(playerCaster, this, skipCheck);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // CUSTOM: el core no puenteaba este hook a Eluna -> habilita OnSpellCast en Lua",
+    "        if (Eluna* eluna = sWorld->GetEluna())",
+    "            eluna->OnSpellCast(playerCaster, this, skipCheck);"
+   ]
+  },
+  {
+   "file": "src/server/game/Spells/SpellEffectsMisc.cpp",
+   "line": 47,
+   "anchor": {
+    "seq": [
+     "#include \"SpellMgr.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Spells/SpellEffectsMisc.cpp",
+   "line": 171,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnPlayerDuelRequest(target, caster);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - PLAYER_EVENT_ON_DUEL_REQUEST",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnDuelRequest(target, caster);"
+   ]
+  },
+  {
+   "file": "src/server/game/Spells/SpellEffectsScript.cpp",
+   "line": 48,
+   "anchor": {
+    "seq": [
+     "#include \"SpellMgr.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Spells/SpellEffectsScript.cpp",
+   "line": 71,
+   "anchor": {
+    "seq": [
+     "if (!unitTarget && !gameObjTarget && !itemTarget)",
+     "return;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - *_EVENT_ON_DUMMY_EFFECT para criatura, gameobject e item. Las tres",
+    "    // sobrecargas comparten nombre; el tipo del ultimo argumento elige.",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "    {",
+    "        if (Creature* creTarget = unitTarget ? unitTarget->ToCreature() : NULL)",
+    "            e->OnDummyEffect(m_caster, m_spellInfo->Id, effIndex, creTarget);",
+    "        else if (gameObjTarget)",
+    "            e->OnDummyEffect(m_caster, m_spellInfo->Id, effIndex, gameObjTarget);"
+   ]
+  },
+  {
+   "file": "src/server/game/Weather/Weather.cpp",
+   "line": 18,
+   "anchor": {
+    "seq": [
+     "#include \"Weather.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "// ===== CUSTOM: Integracion Eluna Engine =====",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Weather/Weather.cpp",
+   "line": 203,
+   "anchor": {
+    "seq": [
+     "if (!player)",
+     "return false;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - WEATHER_EVENT_ON_CHANGE",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnChange(this, m_zone, GetWeatherState(), m_grade);"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 11,
+   "anchor": {
+    "seq": [
+     "#include \"World.h\""
+    ],
+    "position": "after"
+   },
+   "block": [
+    "#include \"../../scripts/LuaEngine/ElunaConfig.h\"",
+    "#include \"../../scripts/LuaEngine/ElunaLoader.h\"",
+    "#include \"../../scripts/LuaEngine/ElunaMgr.h\"",
+    "#include \"../../scripts/LuaEngine/LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 103,
+   "anchor": {
+    "seq": [
+     "World::World()"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    _eluna = NULL;"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 147,
+   "anchor": {
+    "seq": [
+     "VMAP::VMapFactory::clear();"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    if (_eluna)"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 149,
+   "anchor": {
+    "seq": [
+     "VMAP::VMapFactory::clear();"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - WORLD_EVENT_ON_SHUTDOWN, justo antes de cerrar el estado Lua",
+    "        _eluna->OnShutdown();",
+    "        sElunaMgr->Destroy(ElunaInfoKey::MakeGlobalKey(0));",
+    "        _eluna = NULL; // evita punteros colgantes en destructores tardíos",
+    "    }",
+    "    _elunaInfo.reset();"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 193,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnOpenStateChange(!val);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - WORLD_EVENT_ON_OPEN_STATE_CHANGE (mismo criterio invertido)",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnOpenStateChange(!val);"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 420,
+   "anchor": {
+    "seq": [
+     "void World::LoadConfigSettings(bool reload)"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - WORLD_EVENT_ON_CONFIG_LOAD. En el arranque (reload=false) el estado",
+    "    // Lua aun no existe y el guard lo salta solo; en un .reload config si dispara.",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnConfigLoad(reload);"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 1711,
+   "anchor": {
+    "seq": [
+     "sScriptMgr->OnConfigLoad(reload);"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        sElunaConfig->Initialize();"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 2424,
+   "anchor": {
+    "seq": [
+     "sBlackMarketMgr->LoadBlackMarketTemplates();"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    SF_LOG_INFO(\"server.loading\", \"Initializing Eluna...\");",
+    "    sElunaConfig->Initialize();"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 2426,
+   "anchor": {
+    "seq": [
+     "sBlackMarketMgr->LoadBlackMarketTemplates();"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // OJO: WORLD_EVENT_ON_CONFIG_LOAD no se dispara aqui. En el arranque el",
+    "    // estado Lua todavia no existe, asi que solo tiene sentido en las RECARGAS",
+    "    // de configuracion; va en LoadConfigSettings(reload).",
+    "    if (sElunaConfig->IsElunaEnabled())",
+    "    {",
+    "        sElunaLoader->LoadScripts();",
+    "        _elunaInfo = std::make_unique<ElunaInfo>(ElunaInfoKey::MakeGlobalKey(0));",
+    "        sElunaMgr->Create(NULL, *_elunaInfo);",
+    "        _eluna = _elunaInfo->GetEluna();",
+    "        if (_eluna)",
+    "            SF_LOG_INFO(\"server.loading\", \"Eluna Global Instance initialized.\");"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 2438,
+   "anchor": {
+    "seq": [
+     "uint32 startupDuration = GetMSTimeDiffToNow(startupBegin);"
+    ],
+    "position": "before"
+   },
+   "block": [
+    "            SF_LOG_ERROR(\"server.loading\", \"Failed to initialize Eluna Global Instance!\");"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 2441,
+   "anchor": {
+    "seq": [
+     "uint32 startupDuration = GetMSTimeDiffToNow(startupBegin);"
+    ],
+    "position": "before"
+   },
+   "block": [
+    "    // Eluna - WORLD_EVENT_ON_STARTUP, con todo cargado y el estado Lua ya vivo",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnStartup();"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 2738,
+   "anchor": {
+    "seq": [
+     "ProcessCliCommands();"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna",
+    "    if (_eluna)",
+    "        _eluna->UpdateEluna(diff);"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 2741,
+   "anchor": {
+    "seq": [
+     "ProcessCliCommands();"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "        // Eluna - WORLD_EVENT_ON_UPDATE",
+    "        _eluna->OnWorldUpdate(diff);"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 3180,
+   "anchor": {
+    "seq": [
+     "m_ExitCode = exitcode;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - WORLD_EVENT_ON_SHUTDOWN_INIT",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnShutdownInitiate(ShutdownExitCode(exitcode), ShutdownMask(options));"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 3236,
+   "anchor": {
+    "seq": [
+     "if (!m_ShutdownTimer || m_stopEvent)",
+     "return;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    // Eluna - WORLD_EVENT_ON_SHUTDOWN_CANCEL",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnShutdownCancel();"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.h",
+   "line": 31,
+   "anchor": {
+    "seq": [
+     "class SystemMgr;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "class Eluna;",
+    "struct ElunaInfo;"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.h",
+   "line": 588,
+   "anchor": {
+    "seq": [
+     "const SessionMap& GetAllSessions() const { return m_sessions; }"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    Eluna* GetEluna() const { return _eluna; }"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.h",
+   "line": 963,
+   "anchor": {
+    "seq": [
+     "std::vector<RealmCharCountCallback> m_realmCharCallbacks;"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "    std::unique_ptr<ElunaInfo> _elunaInfo;",
+    "    Eluna* _eluna;"
+   ]
+  },
+  {
+   "file": "src/server/scripts/CMakeLists.txt",
+   "line": 47,
+   "anchor": {
+    "seq": [
+     "source_group(World FILES ${sources_World})",
+     "endif()"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "# Eluna Lua Engine",
+    "add_subdirectory(LuaEngine)"
+   ]
+  },
+  {
+   "file": "src/server/scripts/CMakeLists.txt",
+   "line": 188,
+   "anchor": {
+    "seq": [
+     "${scripts_STAT_PCH_SRC}",
+     ")"
+    ],
+    "position": "after"
+   },
+   "block": [
+    "# Link Eluna Engine",
+    "target_link_libraries(scripts PUBLIC eluna)"
+   ]
+  }
+ ],
+ "manual": [
+  {
+   "file": "src/server/game/Entities/Object/ObjectGuid.h",
+   "new_file": true,
+   "content": [
+    "/**",
+    " * @file ObjectGuid.h",
+    " * @brief Compatibility wrapper for SkyFire MoP 5.4.8",
+    " *",
+    " * In SkyFire, ObjectGuid is a typedef (uint64) defined in ObjectDefines.h",
+    " * and used throughout Object.h. Some external modules (e.g., Eluna) expect",
+    " * a standalone ObjectGuid.h header. This wrapper satisfies that include.",
+    " */",
+    "#ifndef _OBJECTGUID_WRAPPER_H",
+    "#define _OBJECTGUID_WRAPPER_H",
+    "",
+    "#include \"ObjectDefines.h\"",
+    "",
+    "#endif // _OBJECTGUID_WRAPPER_H"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.h",
+   "replace": "    void SetTalentSpecialization(uint8 spec, uint32 tree) { _talentMgr->SpecInfo[spec].TalentTree = tree; }",
+   "with": [
+    "    // Eluna: deja de ser inline para poder avisar de PLAYER_EVENT_ON_SPEC_CHANGED",
+    "    void SetTalentSpecialization(uint8 spec, uint32 tree);"
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.cpp",
+   "anchor": "bool Player::LearnTalent(uint16 talentId)",
+   "position": "before",
+   "block": [
+    "// Eluna (SkyFire): SetTalentSpecialization deja de ser inline para avisar de",
+    "// PLAYER_EVENT_ON_SPEC_CHANGED; LearnSpecialization es el equivalente del",
+    "// handler del panel de talentos, expuesto a Lua como Player:SetSpecialization.",
+    "void Player::SetTalentSpecialization(uint8 spec, uint32 tree)",
+    "{",
+    "    uint32 const old = _talentMgr->SpecInfo[spec].TalentTree;",
+    "    _talentMgr->SpecInfo[spec].TalentTree = tree;",
+    "",
+    "    // Eluna - PLAYER_EVENT_ON_SPEC_CHANGED. Solo cuando cambia de verdad, y solo",
+    "    // para la spec ACTIVA: asignar la spec del otro dual-spec no es \"cambiar de",
+    "    // especializacion\" para el jugador. El reset (tree=0) tambien avisa, con 0.",
+    "    if (old != tree && spec == GetActiveSpec())",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnSpecChanged(this, tree, old);",
+    "}",
+    "",
+    "void Player::LearnSpecialization(uint32 specializationId)",
+    "{",
+    "    if (!specializationId)",
+    "        return;",
+    "",
+    "    SetTalentSpecialization(GetActiveSpec(), specializationId);",
+    "    SetUInt32Value(PLAYER_FIELD_CURRENT_SPEC_ID, specializationId);",
+    "    UpdateTalentSpecializationManaBonus();",
+    "",
+    "    // Learn every spell this spec grants up to the current level (mirrors the",
+    "    // in-game specialization-selection handler).",
+    "    std::list<uint32> learnList = GetSpellsForLevels(0, getRaceMask(), specializationId, 0, getLevel());",
+    "    for (std::list<uint32>::const_iterator iter = learnList.begin(); iter != learnList.end(); ++iter)",
+    "        if (!HasSpell(*iter))",
+    "            learnSpell(*iter, true);",
+    "",
+    "    SendTalentsInfoData();",
+    "}",
+    ""
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.h",
+   "anchor": "class SystemMgr;",
+   "position": "after",
+   "block": [
+    "class Eluna;"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.h",
+   "anchor": "class Eluna;",
+   "position": "after",
+   "block": [
+    "struct ElunaInfo;"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.h",
+   "anchor": "const SessionMap& GetAllSessions() const { return m_sessions; }",
+   "position": "after",
+   "block": [
+    "    Eluna* GetEluna() const { return _eluna; }"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.h",
+   "anchor": "std::vector<RealmCharCountCallback> m_realmCharCallbacks;",
+   "position": "after",
+   "block": [
+    "    std::unique_ptr<ElunaInfo> _elunaInfo;"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.h",
+   "anchor": "std::unique_ptr<ElunaInfo> _elunaInfo;",
+   "position": "after",
+   "block": [
+    "    Eluna* _eluna;"
+   ]
+  },
+  {
+   "file": "src/server/scripts/CMakeLists.txt",
+   "anchor": "add_library(scripts STATIC",
+   "position": "before",
+   "block": [
+    "# Eluna Lua Engine",
+    "add_subdirectory(LuaEngine)",
+    ""
+   ]
+  },
+  {
+   "file": "src/server/scripts/CMakeLists.txt",
+   "anchor": "add_dependencies(scripts revision.h)",
+   "position": "before",
+   "block": [
+    "# Link Eluna Engine",
+    "target_link_libraries(scripts PUBLIC eluna)",
+    ""
+   ]
+  },
+  {
+   "file": "src/server/game/Entities/Player/Player.h",
+   "anchor": "uint8 GetActiveSpec() const { return _talentMgr->ActiveSpec; }",
+   "position": "after",
+   "block": [
+    "    void LearnSpecialization(uint32 specializationId);"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/MiscHandler.cpp",
+   "anchor": "else if (IS_GAMEOBJECT_GUID(request.guid))",
+   "position": "before",
+   "block": [
+    "    else if (IS_PLAYER_GUID(request.guid) || IS_ITEM_GUID(request.guid))",
+    "    {",
+    "        // Eluna - PLAYER_GOSSIP e ITEM_GOSSIP. El core solo enrutaba criaturas y",
+    "        // gameobjects: un menu abierto por Lua sobre el propio jugador o sobre un",
+    "        // item caia en tierra de nadie -- unit y go quedaban NULL y la seleccion",
+    "        // se perdia en silencio. Con esto funcionan los menus sin NPC de por medio.",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "        {",
+    "            uint32 sender = _player->PlayerTalkClass->GetGossipOptionSender(request.gossipListId);",
+    "            uint32 action = _player->PlayerTalkClass->GetGossipOptionAction(request.gossipListId);",
+    "            if (IS_ITEM_GUID(request.guid))",
+    "            {",
+    "                if (Item* item = _player->GetItemByGuid(request.guid))",
+    "                    e->HandleGossipSelectOption(_player, item, sender, action, request.code);",
+    "            }",
+    "            else",
+    "                e->HandleGossipSelectOption(_player, request.menuId, sender, action, request.code);",
+    "        }",
+    "        _player->PlayerTalkClass->SendCloseGossip();",
+    "        return;",
+    "    }"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/MiscHandler.cpp",
+   "anchor": "go->AI()->GossipSelectCode(_player, request.menuId, request.gossipListId, request.code.c_str());",
+   "position": "before",
+   "block": [
+    "            // CUSTOM (L-098): mismo hueco para el gossip-select CON code de un GO.",
+    "            if (Eluna* e = sWorld->GetEluna())",
+    "                if (e->OnGossipSelectCode(_player, go,",
+    "                                          _player->PlayerTalkClass->GetGossipOptionSender(request.gossipListId),",
+    "                                          _player->PlayerTalkClass->GetGossipOptionAction(request.gossipListId),",
+    "                                          request.code.c_str()))",
+    "                    return;"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/MiscHandler.cpp",
+   "anchor": "go->AI()->GossipSelect(_player, request.menuId, request.gossipListId);",
+   "position": "before",
+   "block": [
+    "            // ===== CUSTOM: Integracion Eluna (GO gossip SELECT) - L-098 =====",
+    "            // Un GO custom sin script C++ (ScriptId 0) nunca llegaba a Eluna en el",
+    "            // SELECT; los NPC si via ElunaCreatureAI::sGossipSelect (L-093).",
+    "            // Gate + return si Eluna lo maneja.",
+    "            if (Eluna* e = sWorld->GetEluna())",
+    "                if (e->OnGossipSelect(_player, go, _player->PlayerTalkClass->GetGossipOptionSender(request.gossipListId),",
+    "                                      _player->PlayerTalkClass->GetGossipOptionAction(request.gossipListId)))",
+    "                    return;",
+    "            // ==============================================================="
+   ]
+  },
+  {
+   "file": "src/server/game/CMakeLists.txt",
+   "replace": "  ${CMAKE_CURRENT_SOURCE_DIR}/LuaEngine",
+   "with": [
+    "  # LuaEngine de upstream FUERA del include-path: su LuaEngine.h eclipsa al",
+    "  # de scripts/LuaEngine (el nuestro). Solo procede con -DELUNA=1, que no usamos."
+   ]
+  }
+ ]
+}
