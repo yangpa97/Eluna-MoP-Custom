@@ -167,8 +167,13 @@ for f in files:
         # ---- hacia abajo ----
         k = i + 1
         depth = 0
+        cerro = False      # la linea anterior fue un `}` que cerraba una llave NUESTRA
         while k < len(ours):
             s = osig[k]
+            if s.startswith('else') and cerro:
+                k += 1; cerro = False; continue   # el else de nuestro propio if
+            if s != '' and not s.startswith('//'):
+                cerro = False
             if s == '':
                 n = sig_siguiente(k)
                 if n is None: break
@@ -182,7 +187,7 @@ for f in files:
             if s == '{':
                 depth += 1; k += 1; continue
             if s == '}':
-                if depth > 0: depth -= 1; k += 1; continue
+                if depth > 0: depth -= 1; k += 1; cerro = True; continue
                 break
             if s.startswith('//'):
                 n = sig_siguiente(k)

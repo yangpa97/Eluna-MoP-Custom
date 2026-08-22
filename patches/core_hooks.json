@@ -3214,7 +3214,31 @@
   },
   {
    "file": "src/server/game/World/World.cpp",
-   "line": 1711,
+   "line": 1543,
+   "anchor": {
+    "seq": [
+     "setIntConfig(WorldIntConfigs::CONFIG_NUMTHREADS, sConfigMgr->GetIntDefault(\"MapUpdate.Threads\", 1));"
+    ],
+    "position": "after",
+    "indent_rel": 0
+   },
+   "block": [
+    "    // Eluna (SkyFire) es single-state: un solo lua_State para todos los mapas, sin",
+    "    // candados. Con varios hilos de mapa dos hooks entrarian en Lua a la vez y el",
+    "    // servidor se caeria de forma aleatoria y sin pista. Se fuerza a 1 y se avisa;",
+    "    // quien quiera hilos tiene que apagar Eluna.",
+    "    if (sConfigMgr->GetBoolDefault(\"Eluna.Enabled\", true) && getIntConfig(WorldIntConfigs::CONFIG_NUMTHREADS) > 1)",
+    "    {",
+    "        SF_LOG_ERROR(\"server.loading\", \"MapUpdate.Threads = %d es incompatible con Eluna (un solo estado Lua): se fuerza a 1. \"",
+    "                     \"Pon Eluna.Enabled = 0 si necesitas varios hilos de mapa.\",",
+    "                     getIntConfig(WorldIntConfigs::CONFIG_NUMTHREADS));",
+    "        setIntConfig(WorldIntConfigs::CONFIG_NUMTHREADS, 1);",
+    "    }"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 1722,
    "anchor": {
     "seq": [
      "sScriptMgr->OnConfigLoad(reload);"
@@ -3228,7 +3252,7 @@
   },
   {
    "file": "src/server/game/World/World.cpp",
-   "line": 2424,
+   "line": 2435,
    "anchor": {
     "seq": [
      "sBlackMarketMgr->LoadBlackMarketTemplates();"
@@ -3253,6 +3277,8 @@
     "        else",
     "            SF_LOG_ERROR(\"server.loading\", \"Failed to initialize Eluna Global Instance!\");",
     "    }",
+    "    else",
+    "        SF_LOG_INFO(\"server.loading\", \"Eluna disabled (Eluna.Enabled = 0): no Lua scripts will run.\");",
     "",
     "    // Eluna - WORLD_EVENT_ON_STARTUP, con todo cargado y el estado Lua ya vivo",
     "    if (Eluna* e = sWorld->GetEluna())",
@@ -3261,7 +3287,7 @@
   },
   {
    "file": "src/server/game/World/World.cpp",
-   "line": 2738,
+   "line": 2751,
    "anchor": {
     "seq": [
      "ProcessCliCommands();"
@@ -3281,7 +3307,7 @@
   },
   {
    "file": "src/server/game/World/World.cpp",
-   "line": 3182,
+   "line": 3195,
    "anchor": {
     "seq": [
      "m_ExitCode = exitcode;"
@@ -3297,7 +3323,7 @@
   },
   {
    "file": "src/server/game/World/World.cpp",
-   "line": 3238,
+   "line": 3251,
    "anchor": {
     "seq": [
      "if (!m_ShutdownTimer || m_stopEvent)",
