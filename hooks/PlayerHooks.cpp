@@ -44,6 +44,16 @@ void Eluna::OnLearnTalents(Player *pPlayer, uint32 talentId, uint32 talentRank,
   CallAllFunctions(binding, key);
 }
 
+void Eluna::OnSpecChanged(Player *pPlayer, uint32 specializationId,
+                          uint32 oldSpecializationId) {
+  START_HOOK(PLAYER_EVENT_ON_SPEC_CHANGED);
+  if (ElunaSkipBot(pPlayer)) return;
+  HookPush(pPlayer);
+  HookPush(specializationId);
+  HookPush(oldSpecializationId);
+  CallAllFunctions(binding, key);
+}
+
 void Eluna::OnSkillChange(Player *pPlayer, uint32 skillId, uint32 skillValue) {
   START_HOOK(PLAYER_EVENT_ON_SKILL_CHANGE);
   if (ElunaSkipBot(pPlayer)) return;

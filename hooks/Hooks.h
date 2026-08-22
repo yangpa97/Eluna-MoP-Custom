@@ -185,7 +185,10 @@ static constexpr EventEntry ServerEventsTable[] = {
   X(PLAYER_EVENT_ON_TRADE_INIT, 48, "on_trade_init")                           \
   X(PLAYER_EVENT_ON_SEND_MAIL, 49, "on_send_mail")                             \
   /* 50–53 unused */                                                           \
-  X(PLAYER_EVENT_ON_QUEST_STATUS_CHANGED, 54, "on_quest_status_changed")
+  X(PLAYER_EVENT_ON_QUEST_STATUS_CHANGED, 54, "on_quest_status_changed")       \
+  /* SkyFire: el jugador eligio o cambio de ESPECIALIZACION (no de dual-spec). \
+     Es lo que RotaMaster necesita para recalcular sin sondear. */             \
+  X(PLAYER_EVENT_ON_SPEC_CHANGED, 55, "on_spec_changed")
 
 enum PlayerEvents {
 #define X(ID, VALUE, NAME) ID = VALUE,

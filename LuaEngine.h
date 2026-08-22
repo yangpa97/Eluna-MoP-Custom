@@ -611,6 +611,7 @@ public:
   void OnLevelChanged(Player *pPlayer, uint8 oldLevel);
   void OnFreeTalentPointsChanged(Player *pPlayer, uint32 newPoints);
   void OnTalentsReset(Player *pPlayer, bool noCost);
+  void OnSpecChanged(Player *pPlayer, uint32 specializationId, uint32 oldSpecializationId);
   void OnMoneyChanged(Player *pPlayer, int32 &amount);
 #if ELUNA_EXPANSION >= EXP_CATA
   void OnMoneyChanged(Player *pPlayer, int64 &amount);

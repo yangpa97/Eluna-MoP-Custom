@@ -757,6 +757,82 @@ int GetSpecsCount(Eluna *E, Player *player) {
 }
 
 /**
+ * [SKYFIRE / MoP] Devuelve la ESPECIALIZACION del jugador (ChrSpecialization.dbc),
+ * no el indice de dual-spec. Es lo que distingue a un mago Fuego de uno Escarcha;
+ * GetActiveSpec solo dice si esta en la spec 0 o la 1.
+ *
+ * @param uint8 spec = activa : indice de dual-spec a consultar (0 o 1)
+ * @return uint32 specializationId : 0 si aun no ha elegido
+ */
+int GetSpecialization(Eluna *E, Player *player) {
+  uint8 spec = E->CHECKVAL<uint8>(2, player->GetActiveSpec());
+  if (spec >= MAX_TALENT_SPECS) {
+    E->Push(0U);
+    return 1;
+  }
+  E->Push(player->GetTalentSpecialization(spec));
+  return 1;
+}
+
+/**
+ * [SKYFIRE / MoP] Asigna una especializacion y aprende sus hechizos hasta el
+ * nivel actual, igual que hace el panel de talentos. Usa Player::LearnSpecialization
+ * del core, asi que respeta la clase: un id de otra clase no hace nada util.
+ *
+ * @param uint32 specializationId : id de ChrSpecialization.dbc
+ */
+int SetSpecialization(Eluna *E, Player *player) {
+  uint32 specId = E->CHECKVAL<uint32>(2);
+  player->LearnSpecialization(specId);
+  return 0;
+}
+
+/**
+ * [SKYFIRE / MoP] Cantidad de una moneda (CurrencyTypes.dbc): Valor, Justicia,
+ * Conquista, Honor...
+ *
+ * @param uint32 currencyId
+ * @param bool precision = true : dividir por 100 las monedas de alta precision
+ * @return uint32 amount
+ */
+int GetCurrency(Eluna *E, Player *player) {
+  uint32 id = E->CHECKVAL<uint32>(2);
+  bool precision = E->CHECKVAL<bool>(3, true);
+  E->Push(player->GetCurrency(id, precision));
+  return 1;
+}
+
+/**
+ * [SKYFIRE / MoP] Suma o resta una moneda. El core aplica topes semanales y
+ * totales; para saltarselos, ignoreCaps = true.
+ *
+ * @param uint32 currencyId
+ * @param int32 amount : positivo suma, negativo resta
+ * @param bool ignoreCaps = false
+ */
+int ModifyCurrency(Eluna *E, Player *player) {
+  uint32 id = E->CHECKVAL<uint32>(2);
+  int32 amount = E->CHECKVAL<int32>(3);
+  bool ignoreCaps = E->CHECKVAL<bool>(4, false);
+  player->ModifyCurrency(id, amount, true, ignoreCaps);
+  return 0;
+}
+
+/**
+ * [SKYFIRE / MoP] True si el jugador tiene al menos esa cantidad de la moneda.
+ *
+ * @param uint32 currencyId
+ * @param uint32 amount
+ * @return bool
+ */
+int HasCurrency(Eluna *E, Player *player) {
+  uint32 id = E->CHECKVAL<uint32>(2);
+  uint32 amount = E->CHECKVAL<uint32>(3);
+  E->Push(player->HasCurrency(id, amount));
+  return 1;
+}
+
+/**
  * Returns the [Player]s active spec ID
  *
  * @return uint32 specId
@@ -3821,6 +3897,11 @@ ElunaRegister<Player> PlayerMethods[] = {
     {"GetGuildName", &LuaPlayer::GetGuildName},
     {"GetFreeTalentPoints", &LuaPlayer::GetFreeTalentPoints},
     {"GetActiveSpec", &LuaPlayer::GetActiveSpec},
+    {"GetSpecialization", &LuaPlayer::GetSpecialization},
+    {"SetSpecialization", &LuaPlayer::SetSpecialization},
+    {"GetCurrency", &LuaPlayer::GetCurrency},
+    {"ModifyCurrency", &LuaPlayer::ModifyCurrency},
+    {"HasCurrency", &LuaPlayer::HasCurrency},
     {"GetSpecsCount", &LuaPlayer::GetSpecsCount},
     {"GetSpellCooldownDelay", &LuaPlayer::GetSpellCooldownDelay},
     {"GetGuildRank", &LuaPlayer::GetGuildRank},
