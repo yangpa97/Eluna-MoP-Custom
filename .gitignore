@@ -3,3 +3,4 @@
 *.bak
 *.patch
 *.diff
+__pycache__/
