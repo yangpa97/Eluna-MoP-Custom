@@ -706,6 +706,16 @@ public:
   /* Map */
   void OnCreate(Map *map);
   void OnDestroy(Map *map);
+  // SKYFIRE: MAP_EVENT_ON_GRID_LOAD/UNLOAD estaban en Hooks.h desde siempre
+  // pero ningun Eluna los implemento. Se pasa (map, gx, gy); el GridMap* no es
+  // un objeto expuesto a Lua y no aporta nada alli.
+  void OnGridLoad(Map *map, uint32 gx, uint32 gy);
+  void OnGridUnload(Map *map, uint32 gx, uint32 gy);
+
+  /* Unit (SkyFire). damage/gain por referencia: si el handler devuelve un
+     numero, sustituye la cantidad antes de aplicarla. */
+  void OnUnitDamage(Unit *attacker, Unit *victim, uint32 &damage);
+  void OnUnitHeal(Unit *healer, Unit *receiver, uint32 &gain);
   void OnPlayerEnter(Map *map, Player *player);
   void OnPlayerLeave(Map *map, Player *player);
   void OnMapUpdate(Map *map, uint32 diff);

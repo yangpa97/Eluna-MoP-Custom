@@ -118,7 +118,7 @@ static constexpr EventEntry PacketEventsTable[] = {
   X(ELUNA_EVENT_ON_LUA_STATE_OPEN, 33, "on_lua_state_open")                    \
   /* Game events */                                                            \
   X(GAME_EVENT_START, 34, "on_game_start")                                     \
-  X(GAME_EVENT_STOP, 35, "on_game_stop")
+  X(GAME_EVENT_STOP, 35, "on_game_stop")                                         /* SkyFire: dano y curacion de CUALQUIER unidad, modificables por retorno.        El core los tiene en ScriptMgr (OnDamage/OnHeal) y Eluna nunca los expuso.      Es lo que libera a los eventos de C++: igualar jugadores, inmunidades,          escalado de torres... desde Lua. */                                           X(UNIT_EVENT_ON_DAMAGE, 36, "on_unit_damage")                                  X(UNIT_EVENT_ON_HEAL, 37, "on_unit_heal")
 
 enum ServerEvents {
 #define X(ID, VALUE, NAME) ID = VALUE,

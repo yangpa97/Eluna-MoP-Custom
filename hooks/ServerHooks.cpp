@@ -309,6 +309,69 @@ void Eluna::OnDestroy(Map *map) {
   CallAllFunctions(binding, key);
 }
 
+void Eluna::OnGridLoad(Map *map, uint32 gx, uint32 gy) {
+  START_HOOK(MAP_EVENT_ON_GRID_LOAD);
+  HookPush(map);
+  HookPush(gx);
+  HookPush(gy);
+  CallAllFunctions(binding, key);
+}
+
+void Eluna::OnGridUnload(Map *map, uint32 gx, uint32 gy) {
+  START_HOOK(MAP_EVENT_ON_GRID_UNLOAD);
+  HookPush(map);
+  HookPush(gx);
+  HookPush(gy);
+  CallAllFunctions(binding, key);
+}
+
+// Mismo patron que OnGiveXP: el handler recibe (event, attacker, victim, damage)
+// y si devuelve un numero, ese pasa a ser el dano. Varios handlers se encadenan:
+// cada uno ve el valor que dejo el anterior.
+void Eluna::OnUnitDamage(Unit *attacker, Unit *victim, uint32 &damage) {
+  START_HOOK(UNIT_EVENT_ON_DAMAGE);
+  HookPush(attacker);
+  HookPush(victim);
+  HookPush(damage);
+  int amountIndex = lua_gettop(L);
+  int n = SetupStack(binding, key, 3);
+
+  while (n > 0) {
+    int r = CallOneFunction(n--, 3, 1);
+
+    if (lua_isnumber(L, r)) {
+      damage = CHECKVAL<uint32>(r);
+      ReplaceArgument(damage, amountIndex);
+    }
+
+    lua_pop(L, 1);
+  }
+
+  CleanUpStack(3);
+}
+
+void Eluna::OnUnitHeal(Unit *healer, Unit *receiver, uint32 &gain) {
+  START_HOOK(UNIT_EVENT_ON_HEAL);
+  HookPush(healer);
+  HookPush(receiver);
+  HookPush(gain);
+  int amountIndex = lua_gettop(L);
+  int n = SetupStack(binding, key, 3);
+
+  while (n > 0) {
+    int r = CallOneFunction(n--, 3, 1);
+
+    if (lua_isnumber(L, r)) {
+      gain = CHECKVAL<uint32>(r);
+      ReplaceArgument(gain, amountIndex);
+    }
+
+    lua_pop(L, 1);
+  }
+
+  CleanUpStack(3);
+}
+
 void Eluna::OnPlayerEnter(Map *map, Player *player) {
   START_HOOK(MAP_EVENT_ON_PLAYER_ENTER);
   HookPush(map);
