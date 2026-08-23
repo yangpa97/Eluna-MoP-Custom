@@ -1519,6 +1519,33 @@ int ReloadEluna(Eluna *E) {
  *
  * @param string command : the command to run
  */
+#if defined ELUNA_SKYFIRE
+/**
+ * SKYFIRE. Returns the internal opcode number for a client opcode name
+ * (e.g. "CMSG_SEND_MAIL"), or nil. The enum is alphabetical and auto-numbered
+ * in SkyFire, so scripts must look opcodes up by name instead of hardcoding.
+ *
+ * @param string name
+ * @return uint32 opcode
+ */
+int GetOpcodeByName(Eluna *E) {
+  const char *name = E->CHECKVAL<const char *>(1);
+  for (uint32 i = 0; i < NUM_OPCODES; ++i)
+    if (OpcodeHandler const *h = clientOpcodeTable[i])
+      if (h->Name && strcmp(h->Name, name) == 0) {
+        E->Push(i);
+        return 1;
+      }
+  for (uint32 i = 0; i < NUM_OPCODES; ++i)
+    if (OpcodeHandler const *h = serverOpcodeTable[i])
+      if (h->Name && strcmp(h->Name, name) == 0) {
+        E->Push(i);
+        return 1;
+      }
+  return 0;
+}
+#endif
+
 int RunCommand(Eluna *E) {
   const char *command = E->CHECKVAL<const char *>(1);
   // ignores output of the command
@@ -3413,6 +3440,9 @@ ElunaRegister<> GlobalMethods[] = {
     // Other
     {"ReloadEluna", &LuaGlobalFunctions::ReloadEluna},
     {"RunCommand", &LuaGlobalFunctions::RunCommand},
+#if defined ELUNA_SKYFIRE
+    {"GetOpcodeByName", &LuaGlobalFunctions::GetOpcodeByName},
+#endif
     {"SendWorldMessage", &LuaGlobalFunctions::SendWorldMessage},
     {"WorldDBQuery", &LuaGlobalFunctions::WorldDBQuery, METHOD_REG_ALL,
      METHOD_FLAG_UNSAFE},

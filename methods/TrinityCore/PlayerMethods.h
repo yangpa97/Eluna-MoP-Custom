@@ -3311,6 +3311,34 @@ int SendPacket(Eluna *E, Player *player) {
   return 0;
 }
 
+#if defined ELUNA_SKYFIRE
+/**
+ * SKYFIRE. Queues a client packet into the [Player]'s session as if the
+ * client had sent it: the server runs the real handler, and with it every
+ * hook inside. Flagged UNSAFE: a malformed packet kicks the session.
+ *
+ * Returns false and queues nothing when the session has no socket -- a
+ * playerbot, for one. WorldSession::Update only drains _recvQueue while
+ * `m_Socket && !m_Socket->IsClosed()`, so a queued packet would sit there
+ * unprocessed until the session dies: a silent no-op and a leak. Use the
+ * regular Eluna methods on bots instead.
+ *
+ * @param [WorldPacket] packet : a CMSG packet, opcode from GetOpcodeByName
+ * @return bool queued
+ */
+int InjectPacket(Eluna *E, Player *player) {
+  WorldPacket *data = E->CHECKOBJ<WorldPacket>(2);
+  WorldSession *session = player->GetSession();
+  if (!session || session->PlayerDisconnected()) {   // PlayerDisconnected() == !m_Socket
+    E->Push(false);
+    return 1;
+  }
+  session->QueuePacket(new WorldPacket(*data));
+  E->Push(true);
+  return 1;
+}
+#endif
+
 /**
  * Sends addon message to the [Player] receiver
  *
@@ -4050,6 +4078,9 @@ ElunaRegister<Player> PlayerMethods[] = {
     {"SendAreaTriggerMessage", &LuaPlayer::SendAreaTriggerMessage},
     {"SendNotification", &LuaPlayer::SendNotification},
     {"SendPacket", &LuaPlayer::SendPacket},
+#if defined ELUNA_SKYFIRE
+    {"InjectPacket", &LuaPlayer::InjectPacket, METHOD_REG_ALL, METHOD_FLAG_UNSAFE},
+#endif
     {"SendAddonMessage", &LuaPlayer::SendAddonMessage},
     {"ModifyMoney", &LuaPlayer::ModifyMoney},
     {"LearnSpell", &LuaPlayer::LearnSpell},

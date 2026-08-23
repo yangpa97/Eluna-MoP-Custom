@@ -294,6 +294,97 @@ int WriteDouble(Eluna *E, WorldPacket *packet) {
   return 0;
 }
 
+#if defined ELUNA_SKYFIRE
+// ── SKYFIRE: escritura bit a bit (formato de paquetes de MoP 5.4.8) ─────────
+// Los paquetes de cliente de MoP llevan campos de N bits y los GUID van
+// repartidos en una mascara de bits (que bytes son distintos de cero) y una
+// secuencia de bytes (cada uno XOR 1). Estos metodos reproducen exactamente
+// ByteBuffer::WriteBit/WriteBits/FlushBits/WriteGuidMask/WriteGuidBytes para
+// que un script pueda construir un paquete tal como lo leeria el manejador.
+
+/**
+ * Writes a single bit.
+ *
+ * @param boolean bit
+ */
+int WriteBit(Eluna *E, WorldPacket *packet) {
+  bool bit = E->CHECKVAL<bool>(2);
+  packet->WriteBit(bit ? 1 : 0);
+  return 0;
+}
+
+/**
+ * Writes the low `count` bits of `value`, most significant first.
+ *
+ * @param uint32 value
+ * @param uint32 count : number of bits (1..32)
+ */
+int WriteBits(Eluna *E, WorldPacket *packet) {
+  uint32 value = E->CHECKVAL<uint32>(2);
+  uint32 count = E->CHECKVAL<uint32>(3);
+  if (count < 1 || count > 32)
+    return luaL_argerror(E->L, 3, "1..32 bits expected");
+  packet->WriteBits(value, count);
+  return 0;
+}
+
+/**
+ * Flushes the pending bits to a full byte. Call before writing bytes after bits.
+ */
+int FlushBits(Eluna * /*E*/, WorldPacket *packet) {
+  packet->FlushBits();
+  return 0;
+}
+
+/**
+ * Writes the GUID mask bits for the given byte offsets, in that order.
+ *
+ * @param ObjectGuid guid
+ * @param ... : byte offsets 0..7
+ */
+int WriteGuidMask(Eluna *E, WorldPacket *packet) {
+  ObjectGuid guid = E->CHECKVAL<ObjectGuid>(2);
+  int n = lua_gettop(E->L);
+  for (int i = 3; i <= n; ++i) {
+    uint32 off = E->CHECKVAL<uint32>(i);
+    if (off > 7)
+      return luaL_argerror(E->L, i, "byte offset 0..7 expected");
+    packet->WriteBit(guid[off]);
+  }
+  return 0;
+}
+
+/**
+ * Writes the GUID bytes (each XOR 1, skipped when zero) for the given offsets.
+ *
+ * @param ObjectGuid guid
+ * @param ... : byte offsets 0..7
+ */
+int WriteGuidBytes(Eluna *E, WorldPacket *packet) {
+  ObjectGuid guid = E->CHECKVAL<ObjectGuid>(2);
+  int n = lua_gettop(E->L);
+  for (int i = 3; i <= n; ++i) {
+    uint32 off = E->CHECKVAL<uint32>(i);
+    if (off > 7)
+      return luaL_argerror(E->L, i, "byte offset 0..7 expected");
+    packet->WriteByteSeq(guid[off]);
+  }
+  return 0;
+}
+
+/**
+ * Writes raw bytes (no length, no terminator). Use after WriteBits(len, n).
+ *
+ * @param string bytes
+ */
+int WriteBytes(Eluna *E, WorldPacket *packet) {
+  size_t len = 0;
+  const char *s = luaL_checklstring(E->L, 2, &len);
+  packet->append((uint8 const *)s, len);
+  return 0;
+}
+#endif
+
 ElunaRegister<WorldPacket> PacketMethods[] = {
     // Getters
     {"GetOpcode", &LuaPacket::GetOpcode},
@@ -324,7 +415,16 @@ ElunaRegister<WorldPacket> PacketMethods[] = {
     {"WriteGUID", &LuaPacket::WriteGUID},
     {"WriteString", &LuaPacket::WriteString},
     {"WriteFloat", &LuaPacket::WriteFloat},
-    {"WriteDouble", &LuaPacket::WriteDouble}};
+    {"WriteDouble", &LuaPacket::WriteDouble},
+#if defined ELUNA_SKYFIRE
+    {"WriteBit", &LuaPacket::WriteBit},
+    {"WriteBits", &LuaPacket::WriteBits},
+    {"FlushBits", &LuaPacket::FlushBits},
+    {"WriteGuidMask", &LuaPacket::WriteGuidMask},
+    {"WriteGuidBytes", &LuaPacket::WriteGuidBytes},
+    {"WriteBytes", &LuaPacket::WriteBytes},
+#endif
+};
 }; // namespace LuaPacket
 
 #endif

@@ -144,18 +144,21 @@
   },
   {
    "file": "src/server/game/AuctionHouse/AuctionHouseMgr.cpp",
-   "line": 422,
+   "line": 481,
    "anchor": {
     "seq": [
-     "sScriptMgr->OnAuctionRemove(this, auction);"
+     "uint32 itemEntry = auction->itemEntry;",
+     "auction->DeleteFromDB(trans);",
+     "CharacterDatabase.CommitTransaction(trans);"
     ],
     "position": "after",
     "indent_rel": 0
    },
    "block": [
-    "    // Eluna - AUCTION_EVENT_ON_REMOVE (antes del delete: el entry aun es legible)",
-    "    if (Eluna* e = sWorld->GetEluna())",
-    "        e->OnRemove(this, auction);"
+    "        // Eluna - AUCTION_EVENT_ON_REMOVE, antes de sacar el Item del mapa (ver",
+    "        // el mismo patron en AuctionHouseHandler.cpp).",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnRemove(this, auction);"
    ]
   },
   {
@@ -381,7 +384,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 321,
+   "line": 339,
    "anchor": {
     "seq": [
      "loot.maxDuplicates = 3;"
@@ -397,7 +400,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 701,
+   "line": 719,
    "anchor": {
     "seq": [
      "sScriptMgr->OnGameObjectUpdate(this, diff);"
@@ -414,7 +417,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 1535,
+   "line": 1558,
    "anchor": {
     "seq": [
      "if (playerUser->OnArchaeologyFindUsed(this))"
@@ -433,7 +436,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 1548,
+   "line": 1571,
    "anchor": {
     "seq": [
      "if (sScriptMgr->OnGossipHello(playerUser, this))",
@@ -452,7 +455,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 2432,
+   "line": 2455,
    "anchor": {
     "seq": [
      "sScriptMgr->OnGameObjectDamaged(this, eventInvoker);"
@@ -468,7 +471,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 2463,
+   "line": 2486,
    "anchor": {
     "seq": [
      "sScriptMgr->OnGameObjectDestroyed(this, eventInvoker);"
@@ -484,7 +487,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 2527,
+   "line": 2550,
    "anchor": {
     "seq": [
      "sScriptMgr->OnGameObjectLootStateChanged(this, uint32(state), unit);"
@@ -500,7 +503,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 2549,
+   "line": 2572,
    "anchor": {
     "seq": [
      "sScriptMgr->OnGameObjectStateChanged(this, uint32(state));"
@@ -1890,6 +1893,63 @@
     "    // Eluna - GUILD_EVENT_ON_BANK_EVENT",
     "    if (Eluna* e = sWorld->GetEluna())",
     "        e->OnBankEvent(this, uint8(eventType), tabId, lowguid, itemOrMoney, itemStackCount, destTabId);"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/AuctionHouseHandler.cpp",
+   "line": 12,
+   "anchor": {
+    "seq": [
+     "#include \"WorldSession.h\""
+    ],
+    "position": "after",
+    "indent_rel": 0
+   },
+   "block": [
+    "// ========== CUSTOM: Integración Eluna Engine INICIO ==========",
+    "#include \"LuaEngine.h\""
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/AuctionHouseHandler.cpp",
+   "line": 613,
+   "anchor": {
+    "seq": [
+     "auction->DeleteFromDB(trans);",
+     "uint32 itemEntry = auction->itemEntry;"
+    ],
+    "position": "after",
+    "indent_rel": 0
+   },
+   "block": [
+    "        // Eluna - AUCTION_EVENT_ON_REMOVE. Va AQUI, antes de RemoveAItem, y no",
+    "        // dentro de RemoveAuction: el hook resuelve el Item con GetAItem() y para",
+    "        // cuando RemoveAuction corre ya no esta en el mapa, asi que salia por su",
+    "        // guard sin disparar NUNCA (los tres caminos: cancelar, comprar, caducar).",
+    "        // Eluna original tiene el mismo fallo latente.",
+    "        if (Eluna* e = sWorld->GetEluna())",
+    "            e->OnRemove(auctionHouse, auction);"
+   ]
+  },
+  {
+   "file": "src/server/game/Handlers/AuctionHouseHandler.cpp",
+   "line": 701,
+   "anchor": {
+    "seq": [
+     "CharacterDatabase.CommitTransaction(trans);",
+     "uint32 itemEntry = auction->itemEntry;"
+    ],
+    "position": "after",
+    "indent_rel": 0
+   },
+   "block": [
+    "    // Eluna - AUCTION_EVENT_ON_REMOVE. Va AQUI, antes de RemoveAItem, y no",
+    "    // dentro de RemoveAuction: el hook resuelve el Item con GetAItem() y para",
+    "    // cuando RemoveAuction corre ya no esta en el mapa, asi que salia por su",
+    "    // guard sin disparar NUNCA (los tres caminos: cancelar, comprar, caducar).",
+    "    // Eluna original tiene el mismo fallo latente.",
+    "    if (Eluna* e = sWorld->GetEluna())",
+    "        e->OnRemove(auctionHouse, auction);"
    ]
   },
   {
