@@ -779,12 +779,15 @@ int GetSpecialization(Eluna *E, Player *player) {
  * nivel actual, igual que hace el panel de talentos. Usa Player::LearnSpecialization
  * del core, asi que respeta la clase: un id de otra clase no hace nada util.
  *
+ * Devuelve false en un core sin Player::LearnSpecialization (ver ElunaCompat.h).
+ *
  * @param uint32 specializationId : id de ChrSpecialization.dbc
+ * @return bool aplicada
  */
 int SetSpecialization(Eluna *E, Player *player) {
   uint32 specId = E->CHECKVAL<uint32>(2);
-  player->LearnSpecialization(specId);
-  return 0;
+  E->Push(ElunaCompat::LearnSpec(player, specId, 0));
+  return 1;
 }
 
 /**

@@ -78,6 +78,17 @@ auto FieldAlias(R const* r, uint32_t i, int) -> decltype(std::string(r->GetField
 template <typename R>
 std::string FieldAlias(R const*, uint32_t, long) { return std::string(); }
 
+// --- especializacion (MoP): Player::LearnSpecialization no existe en todos los
+// SkyFire; los anteriores a ago-2026 no la tienen. Sin ella SetSpecialization
+// no hace nada en vez de romper la compilacion. ---
+template <typename P>
+auto LearnSpec(P *p, uint32_t id, int) -> decltype(p->LearnSpecialization(id), bool()) {
+  p->LearnSpecialization(id);
+  return true;
+}
+template <typename P>
+bool LearnSpec(P *, uint32_t, long) { return false; }
+
 // --- urand ---
 inline uint32_t urand(uint32_t min, uint32_t max) {
   static thread_local std::mt19937 gen{std::random_device{}()};
