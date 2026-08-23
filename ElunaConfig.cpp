@@ -28,7 +28,12 @@ ElunaConfig::~ElunaConfig() {}
 void ElunaConfig::Initialize() {
   // Load bools
   SetConfig(CONFIG_ELUNA_ENABLED, "Eluna.Enabled", true);
+  // El nombre en espanol fue el original de este fork; se sigue leyendo para no
+  // romper los worldserver.conf que ya existen, pero la clave publicada es la
+  // inglesa y tiene prioridad.
   SetConfig(CONFIG_ELUNA_BOTS_FIRE_HOOKS, "Eluna.BotsDisparanHooks", false);
+  SetConfig(CONFIG_ELUNA_BOTS_FIRE_HOOKS, "Eluna.BotsFireHooks",
+            GetConfig(CONFIG_ELUNA_BOTS_FIRE_HOOKS));
   SetConfig(CONFIG_ELUNA_TRACEBACK, "Eluna.TraceBack", false);
   SetConfig(CONFIG_ELUNA_SCRIPT_RELOADER, "Eluna.ScriptReloader", false);
   SetConfig(CONFIG_ELUNA_ENABLE_UNSAFE, "Eluna.UseUnsafeMethods", true);
