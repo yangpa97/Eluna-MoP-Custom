@@ -1,0 +1,17 @@
+# Botón "Sponsor" del repositorio / repository Sponsor button.
+#
+# Para que aparezca hacen falta DOS cosas: este fichero y que la cuenta esté
+# dada de alta en GitHub Sponsors (github.com/sponsors). Sin el alta, el botón
+# no sale aunque el fichero exista.
+#
+# The button needs BOTH this file and an account enrolled at
+# github.com/sponsors — the file alone does nothing.
+
+github: [yangpa97]
+
+# Otras plataformas, por si algún día: descomenta la que uses.
+# Other platforms, if ever needed: uncomment the one you use.
+#
+# ko_fi: usuario
+# patreon: usuario
+# custom: ["https://ejemplo.com/donar"]
