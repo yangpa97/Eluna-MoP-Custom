@@ -216,7 +216,7 @@
   },
   {
    "file": "src/server/game/Battlegrounds/Battleground.cpp",
-   "line": 1136,
+   "line": 1143,
    "anchor": {
     "seq": [
      "void Battleground::StartBattleground()"
@@ -384,7 +384,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 339,
+   "line": 345,
    "anchor": {
     "seq": [
      "loot.maxDuplicates = 3;"
@@ -400,7 +400,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 719,
+   "line": 725,
    "anchor": {
     "seq": [
      "sScriptMgr->OnGameObjectUpdate(this, diff);"
@@ -417,7 +417,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 1558,
+   "line": 1564,
    "anchor": {
     "seq": [
      "if (playerUser->OnArchaeologyFindUsed(this))"
@@ -436,7 +436,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 1571,
+   "line": 1577,
    "anchor": {
     "seq": [
      "if (sScriptMgr->OnGossipHello(playerUser, this))",
@@ -455,7 +455,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 2455,
+   "line": 2461,
    "anchor": {
     "seq": [
      "sScriptMgr->OnGameObjectDamaged(this, eventInvoker);"
@@ -471,7 +471,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 2486,
+   "line": 2492,
    "anchor": {
     "seq": [
      "sScriptMgr->OnGameObjectDestroyed(this, eventInvoker);"
@@ -487,7 +487,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 2550,
+   "line": 2556,
    "anchor": {
     "seq": [
      "sScriptMgr->OnGameObjectLootStateChanged(this, uint32(state), unit);"
@@ -503,7 +503,7 @@
   },
   {
    "file": "src/server/game/Entities/GameObject/GameObject.cpp",
-   "line": 2572,
+   "line": 2578,
    "anchor": {
     "seq": [
      "sScriptMgr->OnGameObjectStateChanged(this, uint32(state));"
@@ -691,7 +691,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 82,
+   "line": 83,
    "anchor": {
     "seq": [
      "#include \"WorldStateBuilder.h\""
@@ -706,7 +706,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 1223,
+   "line": 1224,
    "anchor": {
     "seq": [
      "UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_DEATHS_FROM, 1, type);"
@@ -722,7 +722,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 3263,
+   "line": 3264,
    "anchor": {
     "seq": [
      "sScriptMgr->OnGivePlayerXP(this, xp, victim);"
@@ -738,7 +738,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 3433,
+   "line": 3434,
    "anchor": {
     "seq": [
      "sScriptMgr->OnPlayerLevelChanged(this, oldLevel);"
@@ -754,7 +754,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 4238,
+   "line": 4239,
    "anchor": {
     "seq": [
      "void Player::learnSpell(uint32 spell_id, bool dependent)"
@@ -774,7 +774,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 4857,
+   "line": 4858,
    "anchor": {
     "seq": [
      "sScriptMgr->OnPlayerTalentsReset(this, noCost);"
@@ -790,7 +790,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 5618,
+   "line": 5619,
    "anchor": {
     "seq": [
      "void Player::ResurrectPlayer(float restore_percent, bool applySickness)"
@@ -809,7 +809,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 6009,
+   "line": 6010,
    "anchor": {
     "seq": [
      "void Player::RepopAtGraveyard()"
@@ -828,7 +828,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 6849,
+   "line": 6850,
    "anchor": {
     "seq": [
      "void Player::SetSkill(uint16 id, uint16 step, uint16 newVal, uint16 maxVal)",
@@ -846,7 +846,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 7533,
+   "line": 7534,
    "anchor": {
     "seq": [
      "uint32 area = areaEntry->m_ID;"
@@ -862,7 +862,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 8626,
+   "line": 8627,
    "anchor": {
     "seq": [
      "void Player::UpdateArea(uint32 newArea)"
@@ -879,7 +879,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 8650,
+   "line": 8651,
    "anchor": {
     "seq": [
      "RemoveByteFlag(UNIT_FIELD_SHAPESHIFT_FORM, 1, UNIT_BYTE2_FLAG_SANCTUARY);"
@@ -895,7 +895,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 8700,
+   "line": 8701,
    "anchor": {
     "seq": [
      "sScriptMgr->OnPlayerUpdateZone(this, newZone, newArea);"
@@ -911,7 +911,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 8849,
+   "line": 8850,
    "anchor": {
     "seq": [
      "sScriptMgr->OnPlayerDuelEnd(duel->opponent, this, type);"
@@ -928,7 +928,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 15023,
+   "line": 15024,
    "anchor": {
     "seq": [
      "BindToInstance(mapSave, true);"
@@ -944,7 +944,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 15344,
+   "line": 15345,
    "anchor": {
     "seq": [
      "void Player::SaveToDB(bool create /*=false*/)",
@@ -962,7 +962,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 16723,
+   "line": 16724,
    "anchor": {
     "seq": [
      "sScriptMgr->OnPlayerDuelStart(this, duel->opponent);"
@@ -978,7 +978,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 19913,
+   "line": 19914,
    "anchor": {
     "seq": [
      "sScriptMgr->OnPlayerMoneyChanged(this, amount);"
@@ -996,7 +996,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 22387,
+   "line": 22388,
    "anchor": {
     "seq": [
      "SendNewItem(newitem, uint32(item->count), false, false, true);"
@@ -1012,7 +1012,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 22743,
+   "line": 22744,
    "anchor": {
     "seq": [
      "return false;",
@@ -1030,7 +1030,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 23530,
+   "line": 23531,
    "anchor": {
     "seq": [
      "RemoveAurasDueToSpell(old_gp->SpellId);"
@@ -1044,7 +1044,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/Player.cpp",
-   "line": 23532,
+   "line": 23533,
    "anchor": {
     "seq": [
      "SetActiveSpec(spec);"
@@ -1145,7 +1145,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/PlayerStorage.cpp",
-   "line": 1772,
+   "line": 1778,
    "anchor": {
     "seq": [
      "if ((proto->Flags2 & ITEM_FLAGS_EXTRA_HORDE_ONLY) && GetTeam() != HORDE)"
@@ -1164,7 +1164,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/PlayerStorage.cpp",
-   "line": 1956,
+   "line": 1962,
    "anchor": {
     "seq": [
      "stmt->setString(1, ss.str());",
@@ -1189,7 +1189,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/PlayerStorage.cpp",
-   "line": 2242,
+   "line": 2248,
    "anchor": {
     "seq": [
      "ApplyEquipCooldown(pItem2);"
@@ -1205,7 +1205,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/PlayerStorage.cpp",
-   "line": 2253,
+   "line": 2259,
    "anchor": {
     "seq": [
      "return pItem2;",
@@ -1227,7 +1227,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/PlayerStorage.cpp",
-   "line": 2358,
+   "line": 2364,
    "anchor": {
     "seq": [
      "if (pProto && pProto->ItemSet)",
@@ -1247,7 +1247,7 @@
   },
   {
    "file": "src/server/game/Entities/Player/PlayerStorage.cpp",
-   "line": 2501,
+   "line": 2507,
    "anchor": {
     "seq": [
      "ItemRemovedQuestCheck(pItem->GetEntry(), pItem->GetCount());"
@@ -3009,7 +3009,7 @@
   },
   {
    "file": "src/server/game/Server/WorldSession.cpp",
-   "line": 341,
+   "line": 342,
    "anchor": {
     "seq": [
      "KickPlayer();"
@@ -3034,7 +3034,7 @@
   },
   {
    "file": "src/server/game/Server/WorldSession.cpp",
-   "line": 645,
+   "line": 646,
    "anchor": {
     "seq": [
      "sSocialMgr->RemovePlayerSocial(_player->GetGUIDLow());"
@@ -3200,7 +3200,36 @@
   },
   {
    "file": "src/server/game/World/World.cpp",
-   "line": 103,
+   "line": 124,
+   "anchor": {
+    "seq": [
+     "int32 World::m_visibility_notify_periodInBGArenas = DEFAULT_VISIBILITY_NOTIFY_PERIOD;"
+    ],
+    "position": "after",
+    "indent_rel": 0
+   },
+   "block": [
+    "/// Avisa a los scripts de que el servidor se va. Con el mundo aún entero: los",
+    "/// jugadores todavía no han sido expulsados.",
+    "void World::NotifyElunaShutdown()",
+    "{",
+    "    if (_eluna)",
+    "        _eluna->OnShutdown();   // Eluna - WORLD_EVENT_ON_SHUTDOWN",
+    "}",
+    "",
+    "/// Cierra el estado Lua. Lo último, cuando ya no queda nada que dispare hooks.",
+    "void World::UnloadEluna()",
+    "{",
+    "    _eluna = NULL;",
+    "    // ~ElunaInfo llama a sElunaMgr->Destroy(key), y aquí sElunaMgr sigue vivo.",
+    "    // En ~World() ya no lo estaba: ese era justamente el fallo.",
+    "    _elunaInfo.reset();",
+    "}"
+   ]
+  },
+  {
+   "file": "src/server/game/World/World.cpp",
+   "line": 144,
    "anchor": {
     "seq": [
      "World::World()"
@@ -3217,28 +3246,7 @@
   },
   {
    "file": "src/server/game/World/World.cpp",
-   "line": 147,
-   "anchor": {
-    "seq": [
-     "VMAP::VMapFactory::clear();"
-    ],
-    "position": "after",
-    "indent_rel": 0
-   },
-   "block": [
-    "    if (_eluna)",
-    "    {",
-    "        // Eluna - WORLD_EVENT_ON_SHUTDOWN, justo antes de cerrar el estado Lua",
-    "        _eluna->OnShutdown();",
-    "        sElunaMgr->Destroy(ElunaInfoKey::MakeGlobalKey(0));",
-    "        _eluna = NULL; // evita punteros colgantes en destructores tardíos",
-    "    }",
-    "    _elunaInfo.reset();"
-   ]
-  },
-  {
-   "file": "src/server/game/World/World.cpp",
-   "line": 193,
+   "line": 229,
    "anchor": {
     "seq": [
      "sScriptMgr->OnOpenStateChange(!val);"
@@ -3254,7 +3262,7 @@
   },
   {
    "file": "src/server/game/World/World.cpp",
-   "line": 420,
+   "line": 456,
    "anchor": {
     "seq": [
      "void World::LoadConfigSettings(bool reload)"
@@ -3274,7 +3282,7 @@
   },
   {
    "file": "src/server/game/World/World.cpp",
-   "line": 1543,
+   "line": 1579,
    "anchor": {
     "seq": [
      "setIntConfig(WorldIntConfigs::CONFIG_NUMTHREADS, sConfigMgr->GetIntDefault(\"MapUpdate.Threads\", 1));"
@@ -3298,7 +3306,7 @@
   },
   {
    "file": "src/server/game/World/World.cpp",
-   "line": 1722,
+   "line": 1758,
    "anchor": {
     "seq": [
      "sScriptMgr->OnConfigLoad(reload);"
@@ -3312,7 +3320,7 @@
   },
   {
    "file": "src/server/game/World/World.cpp",
-   "line": 2435,
+   "line": 2471,
    "anchor": {
     "seq": [
      "sBlackMarketMgr->LoadBlackMarketTemplates();"
@@ -3347,7 +3355,7 @@
   },
   {
    "file": "src/server/game/World/World.cpp",
-   "line": 2751,
+   "line": 2787,
    "anchor": {
     "seq": [
      "ProcessCliCommands();"
@@ -3367,7 +3375,7 @@
   },
   {
    "file": "src/server/game/World/World.cpp",
-   "line": 3195,
+   "line": 3231,
    "anchor": {
     "seq": [
      "m_ExitCode = exitcode;"
@@ -3383,7 +3391,7 @@
   },
   {
    "file": "src/server/game/World/World.cpp",
-   "line": 3251,
+   "line": 3287,
    "anchor": {
     "seq": [
      "if (!m_ShutdownTimer || m_stopEvent)",
@@ -3424,12 +3432,18 @@
     "indent_rel": 0
    },
    "block": [
-    "    Eluna* GetEluna() const { return _eluna; }"
+    "    Eluna* GetEluna() const { return _eluna; }",
+    "",
+    "    /// Cierre de Eluna en dos tiempos, desde el apagado ordenado",
+    "    /// (WorldRunnable::Run), NUNCA desde ~World(): para cuando corre ese",
+    "    /// destructor, ~ElunaMgr ya liberó todo. Ver World.cpp.",
+    "    void NotifyElunaShutdown();",
+    "    void UnloadEluna();"
    ]
   },
   {
    "file": "src/server/game/World/World.h",
-   "line": 963,
+   "line": 969,
    "anchor": {
     "seq": [
      "std::vector<RealmCharCountCallback> m_realmCharCallbacks;"
@@ -3659,6 +3673,27 @@
     "m_elunaProcessorId(0), lua_data(NULL)",
     "// ========== CUSTOM: Integración Eluna Engine FIN ==========",
     "{"
+   ]
+  },
+  {
+   "file": "src/server/worldserver/WorldThread/WorldRunnable.cpp",
+   "anchor": "sScriptMgr->OnShutdown();",
+   "position": "after",
+   "block": [
+    "    sWorld->NotifyElunaShutdown();   // los scripts Lua se enteran a la vez que los de C++"
+   ]
+  },
+  {
+   "file": "src/server/worldserver/WorldThread/WorldRunnable.cpp",
+   "anchor": "sOutdoorPvPMgr->Die();",
+   "position": "after",
+   "block": [
+    "",
+    "    // El estado Lua se cierra AQUI, lo ultimo y con sElunaMgr aun vivo. Antes",
+    "    // no: desmontar mapas y objetos dispara hooks de Eluna. Y despues tampoco:",
+    "    // esto solia hacerse en ~World(), que corre desde exit() cuando ~ElunaMgr",
+    "    // ya libero todo - SIGSEGV en cada apagado. Ver World::UnloadEluna().",
+    "    sWorld->UnloadEluna();"
    ]
   }
  ]

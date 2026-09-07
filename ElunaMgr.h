@@ -104,6 +104,14 @@ public:
 
 private:
     std::unordered_map<ElunaInfoKey, std::unique_ptr<Eluna>> _elunaMap;
+
+    /// Puesta a true por ~ElunaMgr. Existe porque la guarda habitual
+    /// `if (sElunaMgr)` NO protege de nada: instance() devuelve &instance de un
+    /// estatico local, o sea que jamas es nulo, ni vivo ni muerto. Sin esto,
+    /// cualquier ~ElunaInfo que corra despues de ~ElunaMgr (por ejemplo el
+    /// miembro de World, si el apagado ordenado no llego a UnloadEluna) hacia
+    /// erase() sobre un unordered_map ya destruido.
+    static bool _destruido;
 };
 
 #define sElunaMgr ElunaMgr::instance()

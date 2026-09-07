@@ -7,6 +7,8 @@
 #include "ElunaMgr.h"
 #include "LuaEngine.h"
 
+bool ElunaMgr::_destruido = false;
+
 ElunaMgr::ElunaMgr()
 {
 }
@@ -19,10 +21,19 @@ ElunaMgr* ElunaMgr::instance()
 
 ElunaMgr::~ElunaMgr()
 {
+    // La bandera PRIMERO: a partir de aqui cualquier ~ElunaInfo tardio que
+    // llame a Destroy() se convierte en un no-op en vez de tocar un mapa
+    // destruido. Luego se sueltan los Eluna con el objeto aun entero, en vez
+    // de dejarlo para la destruccion implicita del miembro.
+    _destruido = true;
+    _elunaMap.clear();
 }
 
 void ElunaMgr::Create(Map* map, ElunaInfo const& info)
 {
+    if (_destruido)
+        return;
+
     // If already exists, do nothing
     bool keyExists = info.IsValid() && (_elunaMap.find(info.key) != _elunaMap.end());
     if (keyExists)
@@ -33,6 +44,9 @@ void ElunaMgr::Create(Map* map, ElunaInfo const& info)
 
 Eluna* ElunaMgr::Get(ElunaInfoKey key) const
 {
+    if (_destruido)
+        return nullptr;
+
     auto it = _elunaMap.find(key);
     if (it != _elunaMap.end())
         return it->second.get();
@@ -47,6 +61,9 @@ Eluna* ElunaMgr::Get(ElunaInfo const& info) const
 
 void ElunaMgr::Destroy(ElunaInfoKey key)
 {
+    if (_destruido)
+        return;
+
     _elunaMap.erase(key);
 }
 

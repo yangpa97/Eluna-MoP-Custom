@@ -198,6 +198,18 @@ void Eluna::CreateBindStores() {
 void Eluna::DestroyBindStores() {
   for (auto &binding : bindingMaps)
     binding.reset();
+
+  // Limpiar TAMBIEN el atajo, o queda mintiendo. Cada START_HOOK hace:
+  //     if (!HasBindings(tipo)) return;              // lee hasBindings[tipo]
+  //     auto binding = GetBinding<...>(tipo);        // devuelve nullptr
+  //     if (!binding->HasBindingsFor(key)) return;   // <-- revienta
+  // Si aqui se sueltan los bindingMaps pero hasBindings sigue en true, la
+  // guarda deja pasar, GetBinding devuelve nullptr y la linea siguiente lo
+  // desreferencia. Eso convertia CUALQUIER hook disparado despues de cerrar
+  // el estado Lua en un SIGSEGV seguro, no en un no-op.
+  // Paso de verdad (2026-09-07): el apagado del worldserver moria asi, 3 de 3.
+  // El fill(false) solo estaba en CreateBindStores, que no corre al desmontar.
+  hasBindings.fill(false);
 }
 
 void Eluna::RegisterHookGlobals(lua_State *_L) {
